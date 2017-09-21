@@ -20,20 +20,28 @@ class Screen:
 			if font == None:
 				font = pygame.font.SysFont(label['font'], label['font_size'], True)
 				self.fontCache.addFont(label['font'], label['font_size'], font)
-			self.labels.append(Label(font.render(label['text'], True, tuple(label['color'])),
-									tuple(label['position'])))
+			h = False
+			v = False
+			if label.has_key('hvaligment'):
+				h = label['hvaligment'][0]
+				v = label['hvaligment'][1]
+			self.labels.append(Label(font.render(label['text'], True, tuple(label['color'])), tuple(label['position']), h, v))
+
 	def render(self, screen):
 		screen.fill(self.background)
 		for label in self.labels:
 		    label.render(screen)
 
 class Label:
-	def __init__(self, text, position):
+	def __init__(self, text, position, hcenter = False, vcenter = False):
 		self.text = text
 		self.position = position
+		self.hcenter = hcenter
+		self.vcenter = vcenter
+
 	def render(self, screen):
-		position = (screen.get_width() / 2 - self.text.get_width() / 2,
-					screen.get_height() / 2 - self.text.get_height() / 2)
+		position = (screen.get_width() / 2 - self.text.get_width() / 2 if self.hcenter else self.position[0],
+					screen.get_height() / 2 - self.text.get_height() / 2 if self.vcenter else self.position[1])
 		screen.blit(self.text, position)
 
 class FontCache:
