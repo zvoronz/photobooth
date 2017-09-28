@@ -4,6 +4,7 @@ import widgets
 import json
 from PIL import Image, ImageDraw, ImageFont
 import os
+import subprocess
 
 SCENES = []
 with open('config.json', 'r') as f:
@@ -20,8 +21,6 @@ for item in SCENES:
 	screens.append(widgets.Screen(item))
 	
 window = pygame.display.set_mode((800, 480), pygame.HWSURFACE, 32)
-
-done = False
 clock = pygame.time.Clock()
 
 #vkey = VirtualKeyboard(screen)
@@ -42,11 +41,11 @@ def create_photo():
 		
 	font = ImageFont.truetype("arial.ttf", 50)
 	d = ImageDraw.Draw(image)
-	size = d.textsize('www.snappycampers.com', font)
+	size = d.textsize('www.snappycampers.co.uk', font)
 	
 	text = Image.new('RGBA', size, (255, 255, 255, 255))
 	dt = ImageDraw.Draw(text)
-	dt.text((0, 0), 'www.snappycampers.com', (0, 0, 0), font)
+	dt.text((0, 0), 'www.snappycampers.co.uk', (0, 0, 0), font)
 	text = text.transpose(Image.ROTATE_270)
 	
 	image.paste(text, (10, 1800 / 2 - size[0] / 2))
@@ -56,26 +55,54 @@ def create_photo():
 	
 	image.save('my.jpg')
 
-create_photo()
+def capture_photo(number):
+	name = 'capt000%d.jpg' % number
+	sub = subprocess.Popen(['gphoto2','--capture-image-and-download','--filename',
+							'/tmp/%s' % name,'--force-overwrite'],
+							stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+	err = sub.stderr.read()
 
+TAKE_PHOTO = 4
+photo_count = 0
+
+done = False
 while done == False:
 	for event in pygame.event.get():
+		screens[current_screen].onevent(event)		
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_ESCAPE:
 				done = True
+		if event.type == pygame.QUIT:
+			done = True
 		if event.type == pygame.MOUSEBUTTONUP and current_screen == 0:
-			current_screen = 1
-			pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+			##current_screen = 1
+			##pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+			pass			
 		if event.type == pygame.USEREVENT + 1:
 			current_screen += 1
+			
+			if current_screen == len(screens) - 2:
+				pygame.time.set_timer(pygame.USEREVENT + 1, 200)
+			
+			if current_screen == len(screens) - 1 and photo_count < TAKE_PHOTO:
+				photo_count += 1
+				if photo_count != TAKE_PHOTO:
+					capture_photo(photo_count)
+					current_screen = 1
+					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+					
 			if current_screen == len(screens) - 1:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 10000)
 				create_photo()
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				current_screen = 0
+		if event.type == widgets.Button.EVENT_BUTTONCLICK:
+			if event.name == 'btnStartClick':
+				current_screen = 1
+				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+				photo_count = 0
 				
-
 	screens[current_screen].render(window)
 
 	#if input_text == 'quit':

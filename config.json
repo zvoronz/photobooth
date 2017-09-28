@@ -1,0 +1,139 @@
+[{
+	"labels": [{
+		"hvaligment": [true, false],
+		"font_size": 65,
+		"color": [0, 0, 0],
+		"text": "Welcome to Snappy Campers",
+		"position": [0, 100],
+		"font": "Arial"
+	}, {
+		"hvaligment": [true, false],
+		"font_size": 65,
+		"color": [0, 0, 0],
+		"text": "Please Touch Screen to Start",
+		"position": [0, 250],
+		"font": "Arial"
+	}],
+	"buttons":[{
+		"image":"img/start_btn.png",
+		"position":[275, 350],
+		"event":"btnStartClick"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "5",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "4",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "3",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "2",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "1",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 385,
+		"color": [0, 0, 0],
+		"text": "0",
+		"position": [100, 50],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [255, 255, 255]
+}, {
+	"labels": [{
+		"hvaligment": [true, false],
+		"font_size": 80,
+		"color": [0, 0, 0],
+		"text": "Thank You",
+		"position": [0, 20],
+		"font": "Arial"
+	}, {
+		"hvaligment": [true, false],
+		"font_size": 75,
+		"color": [0, 0, 0],
+		"text": "Please Take Photo Below",
+		"position": [0, 175],
+		"font": "Arial"
+	}, {
+		"hvaligment": [true, false],
+		"font_size": 55,
+		"color": [0, 0, 0],
+		"text": "www.snappycampers.co.uk",
+		"position": [100, 380],
+		"font": "Arial"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}]
