@@ -31,6 +31,7 @@ class Screen:
 		screen.fill(self.background)
 		for label in self.labels:
 		    label.render(screen)
+  		pygame.draw.rect(screen, (0, 0, 0), [3, 3, 794, 474], 2)
 
 class Label:
 	def __init__(self, text, position, hcenter = False, vcenter = False):
