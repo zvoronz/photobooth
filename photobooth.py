@@ -19,8 +19,12 @@ screens = []
 current_screen = 0
 for item in SCENES:
 	screens.append(widgets.Screen(item))
-	
-window = pygame.display.set_mode((800, 480), pygame.HWSURFACE, 32)
+
+window_prop = pygame.HWSURFACE
+if os.name == 'posix':
+	window_prop = pygame.FULLSCREEN
+
+window = pygame.display.set_mode((800, 480), window_prop, 32)
 clock = pygame.time.Clock()
 
 #vkey = VirtualKeyboard(screen)
