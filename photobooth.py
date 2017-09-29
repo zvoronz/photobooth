@@ -69,6 +69,7 @@ def capture_photo(number):
 
 TAKE_PHOTO = 4
 photo_count = 0
+threads_queue = []
 
 done = False
 while done == False:
@@ -90,7 +91,9 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 200)
 			
 			if current_screen == len(screens) - 1 and photo_count < TAKE_PHOTO:
-				threading.Thread(target=capture_photo, args=(photo_count, )).start()
+				t = threading.Thread(target=capture_photo, args=(photo_count, ))
+				threads_queue.append(t)
+				t.start()
 				photo_count += 1
 				if photo_count != TAKE_PHOTO:
 					current_screen = 1
@@ -98,6 +101,8 @@ while done == False:
 					
 			if current_screen == len(screens) - 1:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 10000)
+				for t in threads_queue:
+					t.join()
 				create_photo()
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
@@ -107,6 +112,7 @@ while done == False:
 				current_screen = 1
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 0
+				threads_queue = []
 				
 	screens[current_screen].render(window)
 
