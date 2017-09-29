@@ -6,6 +6,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import subprocess
 import threading
+import datetime
 
 SCENES = []
 with open('config.json', 'r') as f:
@@ -58,7 +59,9 @@ def create_photo():
 	del d
 	del dt
 	
-	image.save('my.jpg')
+	today = datetime.datetime.today()	
+	filename = 'results/result_%s_%s.jpg' % (today.date().isoformat(), today.time().strftime('%H-%M-%S'))
+	image.save(filename)
 
 def capture_photo(number):
 	name = 'capt000%d.jpg' % number
