@@ -43,7 +43,7 @@ def create_photo():
 		
 		del photo
 		
-	font = ImageFont.truetype("arial.ttf", 50)
+	font = ImageFont.truetype("fonts/arial.ttf", 50)
 	d = ImageDraw.Draw(image)
 	size = d.textsize('www.snappycampers.co.uk', font)
 	
