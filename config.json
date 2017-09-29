@@ -1,18 +1,18 @@
 [{
 	"labels": [{
 		"hvaligment": [true, false],
-		"font_size": 65,
+		"font_size": 50,
 		"color": [0, 0, 0],
 		"text": "Welcome to Snappy Campers",
 		"position": [0, 100],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}, {
 		"hvaligment": [true, false],
-		"font_size": 65,
+		"font_size": 50,
 		"color": [0, 0, 0],
 		"text": "Please Touch Screen to Start",
 		"position": [0, 250],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"buttons":[{
 		"image":"img/start_btn.png",
@@ -31,7 +31,7 @@
 		"color": [0, 0, 0],
 		"text": "5",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -45,7 +45,7 @@
 		"color": [0, 0, 0],
 		"text": "4",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -59,7 +59,7 @@
 		"color": [0, 0, 0],
 		"text": "3",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -73,7 +73,7 @@
 		"color": [0, 0, 0],
 		"text": "2",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -87,7 +87,7 @@
 		"color": [0, 0, 0],
 		"text": "1",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -101,7 +101,7 @@
 		"color": [0, 0, 0],
 		"text": "0",
 		"position": [100, 50],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -111,25 +111,25 @@
 }, {
 	"labels": [{
 		"hvaligment": [true, false],
-		"font_size": 80,
+		"font_size": 70,
 		"color": [0, 0, 0],
 		"text": "Thank You",
 		"position": [0, 20],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}, {
 		"hvaligment": [true, false],
-		"font_size": 75,
+		"font_size": 65,
 		"color": [0, 0, 0],
 		"text": "Please Take Photo Below",
 		"position": [0, 175],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}, {
 		"hvaligment": [true, false],
 		"font_size": 55,
 		"color": [0, 0, 0],
 		"text": "www.snappycampers.co.uk",
 		"position": [100, 380],
-		"font": "Arial"
+		"font": "fonts/arial.ttf"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",

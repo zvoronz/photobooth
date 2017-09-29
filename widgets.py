@@ -19,7 +19,7 @@ class Screen:
 		for label in (config['labels'] if config.has_key('labels') else []):
 			font = self.fontCache.getFont(label['font'], label['font_size'])
 			if font == None:
-				font = pygame.font.SysFont(label['font'], label['font_size'], True)
+				font = pygame.font.Font(label['font'], label['font_size'])
 				self.fontCache.addFont(label['font'], label['font_size'], font)
 			h = False
 			v = False

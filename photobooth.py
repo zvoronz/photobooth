@@ -1,9 +1,10 @@
+import os
+os.environ['PYGAME_FREETYPE'] = ''
 import pygame
 from virtualKeyboard import VirtualKeyboard
 import widgets
 import json
 from PIL import Image, ImageDraw, ImageFont
-import os
 import subprocess
 import threading
 import datetime
