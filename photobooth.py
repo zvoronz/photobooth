@@ -77,6 +77,7 @@ def capture_photo(number):
 TAKE_PHOTO = 4
 photo_count = 0
 threads_queue = []
+thread_create_photo = None
 
 done = False
 while done == False:
@@ -110,10 +111,14 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 10000)
 				for t in threads_queue:
 					t.join()
-				create_photo()
+				thread_create_photo = threading.Thread(target=create_photo, ())
+				thread_create_photo.start()
+				
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+				thread_create_photo.join()
 				current_screen = 0
+				
 		if event.type == widgets.Button.EVENT_BUTTONCLICK:
 			if event.name == 'btnStartClick':
 				current_screen = 1
