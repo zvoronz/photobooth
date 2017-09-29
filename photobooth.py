@@ -111,7 +111,7 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 10000)
 				for t in threads_queue:
 					t.join()
-				thread_create_photo = threading.Thread(target=create_photo, ())
+				thread_create_photo = threading.Thread(target=create_photo, args=())
 				thread_create_photo.start()
 				
 			if current_screen == len(screens):
