@@ -5,12 +5,13 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 import os
 import subprocess
+import threading
 
 SCENES = []
 with open('config.json', 'r') as f:
 	SCENES = json.loads(f.read())
 
-TMP_FOLDER = 'tmp'
+TMP_FOLDER = '/tmp'
 
 pygame.init()
 #pygame.mouse.set_visible(0)
@@ -91,7 +92,8 @@ while done == False:
 			if current_screen == len(screens) - 1 and photo_count < TAKE_PHOTO:
 				photo_count += 1
 				if photo_count != TAKE_PHOTO:
-					capture_photo(photo_count)
+					threading.Thread(target=capture_photo, args=(photo_count - 1)).start()
+					#capture_photo(photo_count - 1)
 					current_screen = 1
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
