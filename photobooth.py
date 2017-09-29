@@ -13,19 +13,20 @@ SCENES = []
 with open('config.json', 'r') as f:
 	SCENES = json.loads(f.read())
 
-TMP_FOLDER = '/tmp'
-
 pygame.init()
 #pygame.mouse.set_visible(0)
 
 screens = []
 current_screen = 0
+TMP_FOLDER = 'tmp'
+
 for item in SCENES:
 	screens.append(widgets.Screen(item))
 
 window_prop = pygame.HWSURFACE
 if os.name == 'posix':
 	window_prop = pygame.FULLSCREEN
+	TMP_FOLDER = 'tmp'
 
 window = pygame.display.set_mode((800, 480), window_prop, 32)
 clock = pygame.time.Clock()
@@ -60,8 +61,10 @@ def create_photo():
 	del d
 	del dt
 	
-	today = datetime.datetime.today()	
-	filename = 'results/result_%s_%s.jpg' % (today.date().isoformat(), today.time().strftime('%H-%M-%S'))
+	today = datetime.datetime.today()
+	if not os.path.exists('/tmp/results'):
+		os.mkdir('/tmp/results')
+	filename = '/tmp/results/result_%s_%s.jpg' % (today.date().isoformat(), today.time().strftime('%H-%M-%S'))
 	image.save(filename)
 
 def capture_photo(number):
