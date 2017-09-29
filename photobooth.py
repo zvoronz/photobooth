@@ -90,10 +90,9 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 200)
 			
 			if current_screen == len(screens) - 1 and photo_count < TAKE_PHOTO:
+				threading.Thread(target=capture_photo, args=(photo_count, )).start()
 				photo_count += 1
 				if photo_count != TAKE_PHOTO:
-					threading.Thread(target=capture_photo, args=(photo_count - 1)).start()
-					#capture_photo(photo_count - 1)
 					current_screen = 1
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
