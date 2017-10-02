@@ -1,12 +1,12 @@
 ﻿#-------------------------------------------------------------------------------
-# Name:        module1
-# Purpose:
+# Name:        widgets
+# Purpose:	   pygame simple visual controls library
 #
 # Author:      VoRoN
 #
 # Created:     20.09.2017
 # Copyright:   (c) VoRoN 2017
-# Licence:     <your licence>
+# Licence:     MIT
 #-------------------------------------------------------------------------------
 import pygame	
 

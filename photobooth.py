@@ -1,5 +1,16 @@
 import os
 os.environ['PYGAME_FREETYPE'] = ''
+#-------------------------------------------------------------------------------
+# Name:        photobooth
+# Purpose:     Program for photoboxes
+#
+# Author:      VoRoN
+#
+# Created:     03.10.2017
+# Copyright:   (c) VoRoN 2017
+# Licence:     MIT
+#-------------------------------------------------------------------------------
+
 import pygame
 from virtualKeyboard import VirtualKeyboard
 import widgets
@@ -87,7 +98,7 @@ def check_and_close_gvfs_gphoto():
 	if len(gvfs) > 0:
 		for item in gvfs:
 			psId = int(item.split('?')[0].strip())
-			kill = subprocess.Popen(['kill', '-9', str(psId0)],
+			kill = subprocess.Popen(['kill', '-9', str(psId)],
 					stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 			
 def capture_photo(number):
