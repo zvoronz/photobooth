@@ -97,9 +97,9 @@
 }, {
 	"labels": [{
 		"hvaligment": [true, true],
-		"font_size": 385,
+		"font_size": 100,
 		"color": [0, 0, 0],
-		"text": "0",
+		"text": "Strike a pose!",
 		"position": [100, 50],
 		"font": "fonts/arial.ttf"
 	}],
@@ -107,7 +107,7 @@
 		"file":"img/frame.png",
 		"position":[0, 0]
 	}],
-	"background": [255, 255, 255]
+	"background": [139, 174, 233]
 }, {
 	"pictures":[{
 		"file":"img/frame.png",

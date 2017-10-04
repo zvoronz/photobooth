@@ -1,5 +1,3 @@
-import os
-os.environ['PYGAME_FREETYPE'] = ''
 #-------------------------------------------------------------------------------
 # Name:        photobooth
 # Purpose:     Program for photoboxes
@@ -11,6 +9,8 @@ os.environ['PYGAME_FREETYPE'] = ''
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 
+import os
+os.environ['PYGAME_FREETYPE'] = ''
 import pygame
 from virtualKeyboard import VirtualKeyboard
 import widgets
@@ -117,7 +117,7 @@ def capture_photo(number):
 
 TAKE_PHOTO = 4
 photo_count = 0
-threads_queue = []
+thread_take_photo = None
 thread_create_photo = None
 
 done = False
@@ -141,7 +141,7 @@ while done == False:
 			
 			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
 				t = threading.Thread(target=capture_photo, args=(photo_count, ))
-				threads_queue.append(t)
+				thread_take_photo = t
 				t.start()
 				photo_count += 1
 				if photo_count != TAKE_PHOTO:
@@ -150,8 +150,6 @@ while done == False:
 					
 			if current_screen == len(screens) - 2:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
-				for t in threads_queue:
-					t.join()
 				#thread_create_photo = threading.Thread(target=create_photo, args=())
 				#thread_create_photo.start()
 				COLLAGE = create_photo()
@@ -178,9 +176,11 @@ while done == False:
 				current_screen = 1
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 0
-				threads_queue = []
+				thread_take_photo = None
 				
 	screens[current_screen].render(window)
+	if thread_take_photo != None:
+		thread_take_photo.join()
 
 	#if input_text == 'quit':
 	#	done = True
