@@ -140,6 +140,8 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 200)
 			
 			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
+				if thread_take_photo != None:
+					thread_take_photo.join()
 				t = threading.Thread(target=capture_photo, args=(photo_count, ))
 				thread_take_photo = t
 				t.start()
@@ -179,8 +181,6 @@ while done == False:
 				thread_take_photo = None
 				
 	screens[current_screen].render(window)
-	if thread_take_photo != None:
-		thread_take_photo.join()
 
 	#if input_text == 'quit':
 	#	done = True
