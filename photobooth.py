@@ -16,7 +16,6 @@ from virtualKeyboard import VirtualKeyboard
 import widgets
 import json
 from PIL import Image, ImageDraw, ImageFont
-import subprocess
 import threading, thread
 import datetime
 import camera

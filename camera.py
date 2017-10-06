@@ -8,6 +8,7 @@
 # Copyright:   (c) VoRoN 2017
 # Licence:     MIT
 #-------------------------------------------------------------------------------
+import subprocess
 
 def capture_and_download_photo(path):
 	sub = subprocess.Popen(['gphoto2','--capture-image-and-download','--filename',
