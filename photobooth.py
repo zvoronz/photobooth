@@ -17,8 +17,9 @@ import widgets
 import json
 from PIL import Image, ImageDraw, ImageFont
 import subprocess
-import threading
+import threading, thread
 import datetime
+import camera
 
 WIN32 = (os.name != 'posix')
 
@@ -47,22 +48,21 @@ clock = pygame.time.Clock()
 #vkey = VirtualKeyboard(screen)
 #input_text = vkey.run()
 
-PHOTOS = [None, None, None, None]
-COLLAGE = None
-
 def create_photo():
+	filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
+	camera.get_all_files()
+	thread.start_new_thread(camera.delete_all_files, ())
+	
 	F4x6 = (4 * 300, 6 * 300)
 	image = Image.new('RGB', F4x6, (255, 255, 255))
 	positions = [(100, 120), (100, 120 + 750 + 60), (100 + 60 + 500, 120), (100 + 60 + 500, 120 + 750 + 60)]
-	for i in xrange(4):
-##		photo = Image.open(os.path.join(os.path.curdir, TMP_FOLDER, 'capt000%d.jpg' % i))
-##		photo = photo.resize((750, 500))
-##		photo = photo.transpose(Image.ROTATE_270)
-		photo = PHOTOS[i]
+	for i in xrange(1, 5):
+		photo = Image.open(os.path.join(TMP_FOLDER, 'capt000%d.jpg' % i))
+		photo = photo.resize((750, 500))
+		photo = photo.transpose(Image.ROTATE_270)
 		image.paste(photo, positions[i])
 		
 		del photo
-		PHOTOS[i] = None
 		
 	font = ImageFont.truetype("fonts/arial.ttf", 50)
 	d = ImageDraw.Draw(image)
@@ -86,37 +86,13 @@ def create_photo():
 				(today.date().isoformat(), today.time().strftime('%H-%M-%S')))
 	image.save(filename)
 	return image.resize((350, 525)).transpose(Image.ROTATE_90)
-
-def check_and_close_gvfs_gphoto():
-	if WIN32:
-		return
-	psA = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE,
-											stderr=subprocess.PIPE, shell=False)
-	grep = subprocess.Popen(['grep', 'gvfs[d]*-gphoto'], stdin=psA.stdout,
-					stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	gvfs = grep.stdout.readlines()
-	if len(gvfs) > 0:
-		for item in gvfs:
-			psId = int(item.split('?')[0].strip())
-			kill = subprocess.Popen(['kill', '-9', str(psId)],
-					stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
 			
 def capture_photo(number):
-	name = 'capt000%d.jpg' % number
-	
 	if not WIN32:
-		sub = subprocess.Popen(['gphoto2','--capture-image-and-download','--filename',
-								'/tmp/%s' % name,'--force-overwrite'],
-								stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-		err = sub.stderr.read()
-	
-	photo = Image.open(os.path.join(TMP_FOLDER, name))
-	photo = photo.resize((750, 500))
-	photo = photo.transpose(Image.ROTATE_270)
-	PHOTOS[number] = photo
+		camera.trigger_capture()
 
 TAKE_PHOTO = 4
-photo_count = 0
+photo_count = 1
 thread_take_photo = None
 thread_create_photo = None
 
@@ -137,7 +113,7 @@ while done == False:
 			current_screen += 1
 			
 			if current_screen == len(screens) - 3:
-				pygame.time.set_timer(pygame.USEREVENT + 1, 200)
+				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 			
 			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
 				if thread_take_photo != None:
@@ -147,25 +123,26 @@ while done == False:
 				thread_take_photo = t
 				t.start()
 				photo_count += 1
-				if photo_count != TAKE_PHOTO:
+				if photo_count <= TAKE_PHOTO:
 					current_screen = 1
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
 			if current_screen == len(screens) - 2:
+				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
-				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
 				#thread_create_photo = threading.Thread(target=create_photo, args=())
 				#thread_create_photo.start()
-				COLLAGE = create_photo()
+				collage = create_photo()
 				
-				mode = COLLAGE.mode
-				size = COLLAGE.size
-				data = COLLAGE.tobytes()
+				mode = collage.mode
+				size = collage.size
+				data = collage.tobytes()
 				py_image = pygame.image.fromstring(data, size, mode)
 				
 				picture = widgets.Picture(py_image, (137, 65))
 				screens[current_screen].controls.append(picture)
+				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
 					
 			if current_screen == len(screens) - 1:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
@@ -177,7 +154,8 @@ while done == False:
 				
 		if event.type == widgets.Button.EVENT_BUTTONCLICK:
 			if event.name == 'btnStartClick':
-				check_and_close_gvfs_gphoto()
+				if not WIN32:
+					camera.check_and_close_gvfs_gphoto()
 				current_screen = 1
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 0
