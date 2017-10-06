@@ -68,8 +68,8 @@ def delete_all_files():
 		print err
 	
 def shedule_capture_image(interval, count=4):
-	sub = subprocess.Popen(['gphoto2','--capture-image', '--interval', interval,
-							'--frames', count],
+	sub = subprocess.Popen(['gphoto2','--capture-image', '--interval',
+							str(interval), '--frames', str(count)],
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 	err = sub.stderr.read()
