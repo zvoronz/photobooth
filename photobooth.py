@@ -59,7 +59,7 @@ def create_photo():
 		photo = Image.open(os.path.join(TMP_FOLDER, 'capt000%d.jpg' % i))
 		photo = photo.resize((750, 500))
 		photo = photo.transpose(Image.ROTATE_270)
-		image.paste(photo, positions[i])
+		image.paste(photo, positions[i - 1])
 		
 		del photo
 		
