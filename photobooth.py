@@ -162,6 +162,7 @@ while done == False:
 				photo_count = 1
 				thread_take_photo = threading.Thread(target=camera.shedule_capture_image,
 											args=(5, TAKE_PHOTO))
+				thread_take_photo.start()
 				
 	screens[current_screen].render(window)
 
