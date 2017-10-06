@@ -124,7 +124,7 @@ while done == False:
 				photo_count += 1
 				if photo_count <= TAKE_PHOTO:
 					current_screen = 1
-					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+					pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
 					
 			if current_screen == len(screens) - 2:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
@@ -157,7 +157,7 @@ while done == False:
 					camera.check_and_close_gvfs_gphoto()
 				current_screen = 1
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
-				photo_count = 0
+				photo_count = 1
 				thread_take_photo = None
 				
 	screens[current_screen].render(window)
