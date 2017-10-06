@@ -10,12 +10,16 @@
 #-------------------------------------------------------------------------------
 import subprocess
 
+DEBUG = False
+
 def capture_and_download_photo(path):
 	sub = subprocess.Popen(['gphoto2','--capture-image-and-download','--filename',
 								path, '--force-overwrite'],
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 	err = sub.stderr.read()
+	if DEBUG:
+		print err
 	
 def check_and_close_gvfs_gphoto():
 	psA = subprocess.Popen(['ps', '-A'], stdout=subprocess.PIPE,
@@ -42,6 +46,8 @@ def trigger_capture():
 								stdout=subprocess.PIPE,
 								stderr=subprocess.PIPE, shell=False)
 	err = summary.stderr.read()
+	if DEBUG:
+		print err
 
 def get_all_files(filepattern):
 	#pattern example /tmp/capt%04n.jpg
@@ -50,12 +56,16 @@ def get_all_files(filepattern):
 								stdout=subprocess.PIPE,
 								stderr=subprocess.PIPE, shell=False)
 	err = summary.stderr.read()
+	if DEBUG:
+		print err
 	
 def delete_all_files():
 	summary = subprocess.Popen(['gphoto2', '--delete-all-files', '--recurse'],
 								stdout=subprocess.PIPE,
 								stderr=subprocess.PIPE, shell=False)
 	err = summary.stderr.read()
+	if DEBUG:
+		print err
 	
 def shedule_capture_image(interval, count=4):
 	sub = subprocess.Popen(['gphoto2','--capture-image', '--interval', interval,
@@ -63,3 +73,5 @@ def shedule_capture_image(interval, count=4):
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 	err = sub.stderr.read()
+	if DEBUG:
+		print err

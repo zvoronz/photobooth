@@ -95,6 +95,7 @@ TAKE_PHOTO = 4
 photo_count = 1
 thread_take_photo = None
 thread_create_photo = None
+camera.DEBUG = True
 
 done = False
 while done == False:
