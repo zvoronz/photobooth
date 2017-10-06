@@ -48,9 +48,10 @@ clock = pygame.time.Clock()
 #input_text = vkey.run()
 
 def create_photo():
-	filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
-	camera.get_all_files(filepattern)
-	thread.start_new_thread(camera.delete_all_files, ())
+	if not WIN32:
+		filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
+		camera.get_all_files(filepattern)
+		thread.start_new_thread(camera.delete_all_files, ())
 	
 	F4x6 = (4 * 300, 6 * 300)
 	image = Image.new('RGB', F4x6, (255, 255, 255))
@@ -115,12 +116,12 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 			
 			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
-				if thread_take_photo != None:
-					pygame.time.set_timer(pygame.USEREVENT + 1, 0)
-					thread_take_photo.join()
-				t = threading.Thread(target=capture_photo, args=(photo_count, ))
-				thread_take_photo = t
-				t.start()
+##				if thread_take_photo != None:
+##					pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+##					thread_take_photo.join()
+##				t = threading.Thread(target=capture_photo, args=(photo_count, ))
+##				thread_take_photo = t
+##				t.start()
 				photo_count += 1
 				if photo_count <= TAKE_PHOTO:
 					current_screen = 1
@@ -157,8 +158,9 @@ while done == False:
 					camera.check_and_close_gvfs_gphoto()
 				current_screen = 1
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
-				photo_count = 0
-				thread_take_photo = None
+				photo_count = 1
+				thread_take_photo = threading.Thread(target=camera.shedule_capture_image,
+											args=(5, TAKE_PHOTO))
 				
 	screens[current_screen].render(window)
 
