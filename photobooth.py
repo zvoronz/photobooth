@@ -49,7 +49,7 @@ clock = pygame.time.Clock()
 
 def create_photo():
 	filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
-	camera.get_all_files()
+	camera.get_all_files(filepattern)
 	thread.start_new_thread(camera.delete_all_files, ())
 	
 	F4x6 = (4 * 300, 6 * 300)
