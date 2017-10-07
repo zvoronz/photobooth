@@ -112,7 +112,7 @@ while done == False:
 			current_screen += 1
 			
 			if current_screen == len(screens) - 3:
-				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+				pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
 			
 			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
 				if thread_take_photo != None:
@@ -124,7 +124,7 @@ while done == False:
 				photo_count += 1
 				if photo_count <= TAKE_PHOTO:
 					current_screen = 1
-					pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
+					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
 			if current_screen == len(screens) - 2:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
