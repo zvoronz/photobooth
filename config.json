@@ -1,4 +1,5 @@
 [{
+	"name":"MainScreen",
 	"labels": [{
 		"hvaligment": [true, false],
 		"font_size": 50,
@@ -25,6 +26,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"Screen5",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 385,
@@ -39,6 +41,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"Screen4",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 385,
@@ -53,6 +56,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"Screen3",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 385,
@@ -67,6 +71,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"Screen2",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 385,
@@ -81,6 +86,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"Screen1",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 385,
@@ -95,6 +101,7 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"StrikeAPoseScreen",
 	"labels": [{
 		"hvaligment": [true, true],
 		"font_size": 100,
@@ -109,12 +116,14 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"PreviewScreen",
 	"pictures":[{
 		"file":"img/frame.png",
 		"position":[0, 0]
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"EndScreen",
 	"labels": [{
 		"hvaligment": [true, false],
 		"font_size": 70,

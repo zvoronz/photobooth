@@ -12,7 +12,7 @@ import pygame
 
 class Screen:
 	def __init__(self, config):
-		#self.name = config['name']
+		self.name = config['name']
 		self.fontCache = FontCache()
 		self.background = tuple(config['background'])
 		self.controls = []

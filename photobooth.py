@@ -48,9 +48,10 @@ clock = pygame.time.Clock()
 #input_text = vkey.run()
 
 def create_photo():
-	filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
-	camera.get_all_files(filepattern)
-	thread.start_new_thread(camera.delete_all_files, ())
+	if not WIN32:
+		filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
+		camera.get_all_files(filepattern)
+		thread.start_new_thread(camera.delete_all_files, ())
 	
 	F4x6 = (4 * 300, 6 * 300)
 	image = Image.new('RGB', F4x6, (255, 255, 255))
@@ -89,6 +90,20 @@ def create_photo():
 def capture_photo(number):
 	if not WIN32:
 		camera.trigger_capture()
+		
+def current_screen_is(name):
+	return screens[current_screen].name == name
+
+def set_current_screen(name):
+	global current_screen
+	for x in xrange(len(screens)):
+		if screens[x].name == name:
+			current_screen = x
+			break
+
+def next_screen():
+	global current_screen
+	current_screen += 1
 
 TAKE_PHOTO = 4
 photo_count = 1
@@ -104,29 +119,28 @@ while done == False:
 				done = True
 		if event.type == pygame.QUIT:
 			done = True
-		if event.type == pygame.MOUSEBUTTONUP and current_screen == 0:
-			##current_screen = 1
-			##pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
-			pass			
+		if event.type == pygame.MOUSEBUTTONUP and current_screen_is('PreviewScreen'):
+			next_screen()
+			pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+
 		if event.type == pygame.USEREVENT + 1:
-			current_screen += 1
+			next_screen()
 			
-			if current_screen == len(screens) - 3:
+			if current_screen_is('StrikeAPoseScreen'):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
 			
-			if current_screen == len(screens) - 2 and photo_count < TAKE_PHOTO:
+			if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
 				if thread_take_photo != None:
-					pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 					thread_take_photo.join()
 				t = threading.Thread(target=capture_photo, args=(photo_count, ))
 				thread_take_photo = t
 				t.start()
 				photo_count += 1
 				if photo_count <= TAKE_PHOTO:
-					current_screen = 1
+					set_current_screen('Screen5')
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
-			if current_screen == len(screens) - 2:
+			if current_screen_is('PreviewScreen') and photo_count > TAKE_PHOTO:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
@@ -142,28 +156,25 @@ while done == False:
 				picture = widgets.Picture(py_image, (137, 65))
 				screens[current_screen].controls.append(picture)
 				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
-					
-			if current_screen == len(screens) - 1:
-				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
-				
+
+			if current_screen_is('EndScreen'):
+				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)			
+
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				#thread_create_photo.join()
-				current_screen = 0
+				set_current_screen('MainScreen')
 				
 		if event.type == widgets.Button.EVENT_BUTTONCLICK:
 			if event.name == 'btnStartClick':
 				if not WIN32:
 					camera.check_and_close_gvfs_gphoto()
-				current_screen = 1
+				set_current_screen('Screen5')
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 1
 				thread_take_photo = None
 				
 	screens[current_screen].render(window)
-
-	#if input_text == 'quit':
-	#	done = True
 	pygame.display.flip()
 	clock.tick(60)
 pygame.quit()

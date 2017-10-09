@@ -44,7 +44,7 @@ def trigger_capture():
 	err = summary.stderr.read()
 
 def get_all_files(filepattern):
-	#pattern example /tmp/capt%04n.jpg
+	##pattern example /tmp/capt%04n.jpg
 	summary = subprocess.Popen(['gphoto2', '--get-all-files', '--filename',
 								filepattern, '--force-overwrite'],
 								stdout=subprocess.PIPE,
