@@ -6,6 +6,7 @@
 
 
 import sys
+import camera
 
 try:
     from Tkinter import *
@@ -60,7 +61,7 @@ def init(top, gui, *args, **kwargs):
     
     txtSAPVar.set(2000)
     gui.cbPrintFormat['values'] = ('4x6', '2x6')
-    #lblCameraVar.set(camera.get_model())
+    lblCameraVar.set(camera.get_model())
 
 def destroy_window():
     # Function which closes the window.
