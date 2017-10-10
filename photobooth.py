@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #-------------------------------------------------------------------------------
 # Name:        photobooth
 # Purpose:     Program for photoboxes
