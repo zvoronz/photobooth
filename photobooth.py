@@ -92,6 +92,8 @@ def capture_photo(number):
 		camera.trigger_capture()
 		
 def current_screen_is(name):
+	if current_screen >= len(screens):
+		return False
 	return screens[current_screen].name == name
 
 def set_current_screen(name):
@@ -110,6 +112,8 @@ photo_count = 1
 thread_take_photo = None
 thread_create_photo = None
 
+delayScreen = 'Screen6'
+
 done = False
 while done == False:
 	for event in pygame.event.get():
@@ -127,20 +131,20 @@ while done == False:
 			next_screen()
 			
 			if current_screen_is('StrikeAPoseScreen'):
-				pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
-			
-			if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
 				if thread_take_photo != None:
 					thread_take_photo.join()
 				t = threading.Thread(target=capture_photo, args=(photo_count, ))
 				thread_take_photo = t
 				t.start()
+				pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
+			
+			if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
 				photo_count += 1
 				if photo_count <= TAKE_PHOTO:
-					set_current_screen('Screen5')
+					set_current_screen(delayScreen)
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
-			if current_screen_is('PreviewScreen') and photo_count > TAKE_PHOTO:
+			if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
@@ -155,7 +159,7 @@ while done == False:
 				
 				picture = widgets.Picture(py_image, (137, 65))
 				screens[current_screen].controls.append(picture)
-				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+				#pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
 
 			if current_screen_is('EndScreen'):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)			
@@ -169,7 +173,7 @@ while done == False:
 			if event.name == 'btnStartClick':
 				if not WIN32:
 					camera.check_and_close_gvfs_gphoto()
-				set_current_screen('Screen5')
+				set_current_screen(delayScreen)
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 1
 				thread_take_photo = None
