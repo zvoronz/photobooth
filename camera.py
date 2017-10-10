@@ -32,9 +32,9 @@ def check_and_close_gvfs_gphoto():
 def get_model():
 	summary = subprocess.Popen(['gphoto2', '--summary'], stdout=subprocess.PIPE,
 											stderr=subprocess.PIPE, shell=False)
-	grep = subprocess.Popen(['grep', 'Model:'], stdin=psA.stdout,
+	grep = subprocess.Popen(['grep', 'Model:'], stdin=summary.stdout,
 					stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
-	model = grep.stdout.readlines()[7:]
+	model = grep.stdout.read()[7:].strip()
 	return model
 
 def trigger_capture():

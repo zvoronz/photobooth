@@ -70,7 +70,7 @@ proc vTclWindow.top37 {base} {
         -background {#d9d9d9} -highlightbackground {#d9d9d9} \
         -highlightcolor black 
     wm focusmodel $top passive
-    wm geometry $top 594x400+625+288
+    wm geometry $top 594x400+100+0
     update
     # set in toplevel.wgt.
     global vTcl
@@ -78,26 +78,24 @@ proc vTclWindow.top37 {base} {
     wm maxsize $top 1916 1053
     wm minsize $top 120 1
     wm overrideredirect $top 0
-    wm resizable $top 1 1
+    wm resizable $top 0 0
     wm deiconify $top
     wm title $top "photobooth settings"
     vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
-    ttk::style configure Button -background #d9d9d9
-    ttk::style configure Button -foreground #000000
-    ttk::style configure Button -font TkDefaultFont
     button $top.but45 \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#d9d9d9} -disabledforeground {#a3a3a3} \
-        -font $::vTcl(fonts,vTcl:font9,object) -foreground {#000000} \
-        -highlightbackground {#d9d9d9} -highlightcolor black -pady 0 \
-        -text Save 
+        -background {#d9d9d9} -command onBtnSaveConfig \
+        -disabledforeground {#a3a3a3} -font $::vTcl(fonts,vTcl:font9,object) \
+        -foreground {#000000} -highlightbackground {#d9d9d9} \
+        -highlightcolor black -pady 0 -text Save 
     vTcl:DefineAlias "$top.but45" "btnSave" vTcl:WidgetProc "Toplevel1" 1
     ttk::label $top.tLa48 \
         -background {#d9d9d9} -foreground {#000000} -relief flat \
-        -text {Print format:} 
+        -justify right -text {Print format:} 
     vTcl:DefineAlias "$top.tLa48" "TLabel1" vTcl:WidgetProc "Toplevel1" 1
     ttk::combobox $top.tCo49 \
-        -textvariable combobox -foreground {} -background {} -takefocus {} 
+        -textvariable combobox -foreground {} -background {} -takefocus {} \
+        -cursor arrow 
     vTcl:DefineAlias "$top.tCo49" "cbPrintFormat" vTcl:WidgetProc "Toplevel1" 1
     button $top.but37 \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
@@ -113,15 +111,16 @@ proc vTclWindow.top37 {base} {
         -highlightcolor black -text {Delay screens:} 
     vTcl:DefineAlias "$top.lab40" "Label5" vTcl:WidgetProc "Toplevel1" 1
     ttk::combobox $top.tCo43 \
-        -textvariable combobox -foreground {} -background {} -takefocus {} 
+        -textvariable combobox2 -foreground {} -background {} -takefocus {} \
+        -cursor arrow 
     vTcl:DefineAlias "$top.tCo43" "cbDelayScreen" vTcl:WidgetProc "Toplevel1" 1
     ttk::label $top.tLa44 \
         -background {#d9d9d9} -foreground {#000000} -relief flat \
         -text {'Strike a pose' delay:} 
     vTcl:DefineAlias "$top.tLa44" "TLabel2" vTcl:WidgetProc "Toplevel1" 1
     ttk::entry $top.tEn45 \
-        -textvariable txtSAPvar -foreground {} -background {} -takefocus {} \
-        -cursor ibeam 
+        -textvariable txtSAPVar -foreground {} -background {} -takefocus {} \
+        -cursor arrow 
     vTcl:DefineAlias "$top.tEn45" "txtSAP" vTcl:WidgetProc "Toplevel1" 1
     ttk::label $top.tLa46 \
         -background {#d9d9d9} -foreground {#000000} -relief flat -text ms 
@@ -134,9 +133,10 @@ proc vTclWindow.top37 {base} {
     vTcl:DefineAlias "$top.can51" "Canvas1" vTcl:WidgetProc "Toplevel1" 1
     button $top.but52 \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#d9d9d9} -disabledforeground {#a3a3a3} \
-        -foreground {#000000} -highlightbackground {#d9d9d9} \
-        -highlightcolor black -pady 0 -text {Take photo} 
+        -background {#d9d9d9} -command onBtnTakePhoto \
+        -disabledforeground {#a3a3a3} -foreground {#000000} \
+        -highlightbackground {#d9d9d9} -highlightcolor black -pady 0 \
+        -text {Take photo} 
     vTcl:DefineAlias "$top.but52" "btnTakePhoto" vTcl:WidgetProc "Toplevel1" 1
     label $top.cpd54 \
         -activebackground {#f9f9f9} -activeforeground black \
@@ -148,7 +148,7 @@ proc vTclWindow.top37 {base} {
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#d9d9d9} -disabledforeground {#a3a3a3} \
         -foreground {#000000} -highlightbackground {#d9d9d9} \
-        -highlightcolor black -justify right -text Printer: -width 44 
+        -highlightcolor black -justify right -text Printer: -width 64 
     vTcl:DefineAlias "$top.cpd56" "Label2" vTcl:WidgetProc "Toplevel1" 1
     label $top.cpd57 \
         -activebackground {#f9f9f9} -activeforeground black \
@@ -164,16 +164,17 @@ proc vTclWindow.top37 {base} {
     vTcl:DefineAlias "$top.cpd58" "lblPrinter" vTcl:WidgetProc "Toplevel1" 1
     button $top.cpd59 \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
-        -background {#d9d9d9} -disabledforeground {#a3a3a3} \
-        -foreground {#000000} -highlightbackground {#d9d9d9} \
-        -highlightcolor black -pady 0 -text Update 
+        -background {#d9d9d9} -command onBtnPrinterUpdate \
+        -disabledforeground {#a3a3a3} -foreground {#000000} \
+        -highlightbackground {#d9d9d9} -highlightcolor black -pady 0 \
+        -text Update 
     vTcl:DefineAlias "$top.cpd59" "btnUpdatePrinter" vTcl:WidgetProc "Toplevel1" 1
     checkbutton $top.che61 \
         -activebackground {#d9d9d9} -activeforeground {#000000} \
         -background {#d9d9d9} -disabledforeground {#a3a3a3} \
         -foreground {#000000} -highlightbackground {#d9d9d9} \
         -highlightcolor black -justify left -text {Preview screen} \
-        -variable che61 
+        -variable ckBoxVar 
     vTcl:DefineAlias "$top.che61" "ckPreviewScreen" vTcl:WidgetProc "Toplevel1" 1
     label $top.lab62 \
         -activebackground {#f9f9f9} -activeforeground black \
@@ -188,10 +189,12 @@ proc vTclWindow.top37 {base} {
         -highlightcolor black -text {Preview screen delay:} 
     vTcl:DefineAlias "$top.lab63" "Label7" vTcl:WidgetProc "Toplevel1" 1
     ttk::entry $top.cpd64 \
-        -foreground {} -background {} -takefocus {} -cursor ibeam 
+        -textvariable txtEndScreenDelayVar -foreground {} -background {} \
+        -takefocus {} -cursor arrow 
     vTcl:DefineAlias "$top.cpd64" "txtEndDelay" vTcl:WidgetProc "Toplevel1" 1
     ttk::entry $top.cpd65 \
-        -foreground {} -background {} -takefocus {} -cursor ibeam 
+        -textvariable txtPreviewScreenDelay -foreground {} -background {} \
+        -takefocus {} -cursor arrow 
     vTcl:DefineAlias "$top.cpd65" "txtPreviewDelay" vTcl:WidgetProc "Toplevel1" 1
     ###################
     # SETTING GEOMETRY
@@ -200,28 +203,28 @@ proc vTclWindow.top37 {base} {
         -in $top -x 440 -y 330 -width 127 -relwidth 0 -height 44 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tLa48 \
-        -in $top -x 41 -y 115 -width 71 -height 19 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 1 -y 115 -width 131 -relwidth 0 -height 19 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.tCo49 \
-        -in $top -x 123 -y 115 -width 64 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 140 -y 114 -width 64 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.but37 \
-        -in $top -x 510 -y 8 -width 47 -height 24 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 510 -y 8 -width 67 -relwidth 0 -height 24 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.lab40 \
-        -in $top -x 34 -y 145 -width 80 -height 21 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 4 -y 145 -width 130 -relwidth 0 -height 21 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.tCo43 \
-        -in $top -x 123 -y 146 -width 64 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 140 -y 146 -width 64 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tLa44 \
-        -in $top -x 4 -y 178 -width 110 -height 19 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 4 -y 178 -width 130 -relwidth 0 -height 19 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.tEn45 \
-        -in $top -x 123 -y 177 -width 64 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 140 -y 177 -width 64 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tLa46 \
-        -in $top -x 190 -y 179 -width 20 -height 19 -anchor nw \
+        -in $top -x 207 -y 179 -width 20 -height 19 -anchor nw \
         -bordermode ignore 
     place $top.can51 \
         -in $top -x 20 -y 210 -width 186 -relwidth 0 -height 153 -relheight 0 \
@@ -230,10 +233,10 @@ proc vTclWindow.top37 {base} {
         -in $top -x 20 -y 370 -width 187 -relwidth 0 -height 24 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.cpd54 \
-        -in $top -x 20 -y 10 -width 44 -height 21 -anchor nw \
-        -bordermode inside 
+        -in $top -x 0 -y 10 -width 64 -relwidth 0 -height 21 -relheight 0 \
+        -anchor nw -bordermode inside 
     place $top.cpd56 \
-        -in $top -x 23 -y 40 -width 44 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 3 -y 40 -width 64 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.cpd57 \
         -in $top -x 81 -y 10 -width 424 -height 21 -anchor nw \
@@ -242,21 +245,22 @@ proc vTclWindow.top37 {base} {
         -in $top -x 81 -y 40 -width 424 -height 21 -anchor nw \
         -bordermode ignore 
     place $top.cpd59 \
-        -in $top -x 510 -y 38 -width 47 -height 24 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 510 -y 38 -width 67 -relwidth 0 -height 24 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.che61 \
-        -in $top -x 249 -y 110 -width 101 -relwidth 0 -height 25 -relheight 0 \
+        -in $top -x 259 -y 110 -width 141 -relwidth 0 -height 25 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab62 \
-        -in $top -x 271 -y 140 -width 97 -height 21 -anchor nw \
-        -bordermode ignore 
+        -in $top -x 250 -y 140 -width 147 -relwidth 0 -height 21 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.lab63 \
-        -in $top -x 250 -y 170 -anchor nw -bordermode ignore 
+        -in $top -x 250 -y 170 -width 148 -relwidth 0 -height 21 -relheight 0 \
+        -anchor nw -bordermode ignore 
     place $top.cpd64 \
-        -in $top -x 375 -y 141 -width 64 -height 21 -anchor nw \
+        -in $top -x 403 -y 141 -width 64 -height 21 -anchor nw \
         -bordermode ignore 
     place $top.cpd65 \
-        -in $top -x 375 -y 170 -width 64 -height 21 -anchor nw \
+        -in $top -x 403 -y 170 -width 64 -height 21 -anchor nw \
         -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>
