@@ -58,7 +58,7 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
     
-    txtSAPvar.set(2000)
+    txtSAPVar.set(2000)
     gui.cbPrintFormat['values'] = ('4x6', '2x6')
     #lblCameraVar.set(camera.get_model())
 
