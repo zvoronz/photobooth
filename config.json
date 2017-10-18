@@ -138,6 +138,21 @@
 	}],
 	"background": [139, 174, 233]
 }, {
+	"name":"WorkInProgress",
+	"labels": [{
+		"hvaligment": [true, true],
+		"font_size": 50,
+		"color": [255, 0, 0],
+		"text": "Creating collage... Please wait.",
+		"position": [100, 50],
+		"font": "fonts/arial.ttf"
+	}],
+	"pictures":[{
+		"file":"img/frame.png",
+		"position":[0, 0]
+	}],
+	"background": [139, 174, 233]
+}, {
 	"name":"EndScreen",
 	"labels": [{
 		"hvaligment": [true, false],

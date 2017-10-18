@@ -21,6 +21,15 @@ import threading, thread
 import datetime
 import camera
 
+SETTINGS = {
+	'print_format':'4x6',
+	'delay_screens':'Screen1',
+	'strike_a_pose_delay':2000,
+	'preview_screen':True,
+	'preview_screen_delay':0,
+	'end_screen_delay':5000
+}
+
 WIN32 = (os.name != 'posix')
 
 SCENES = []
@@ -45,9 +54,6 @@ if not WIN32:
 window = pygame.display.set_mode((800, 480), window_prop, 32)
 clock = pygame.time.Clock()
 
-#vkey = VirtualKeyboard(screen)
-#input_text = vkey.run()
-
 def create_photo():
 	if not WIN32:
 		filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
@@ -56,7 +62,8 @@ def create_photo():
 	
 	F4x6 = (4 * 300, 6 * 300)
 	image = Image.new('RGB', F4x6, (255, 255, 255))
-	positions = [(100, 120), (100, 120 + 750 + 60), (100 + 60 + 500, 120), (100 + 60 + 500, 120 + 750 + 60)]
+	positions = [(100, 120), (100, 120 + 750 + 60), (100 + 60 + 500, 120),\
+				(100 + 60 + 500, 120 + 750 + 60)]
 	for i in xrange(1, 5):
 		photo = Image.open(os.path.join(TMP_FOLDER, 'capt000%d.jpg' % i))
 		photo = photo.resize((750, 500))
@@ -97,6 +104,12 @@ def current_screen_is(name):
 		return False
 	return screens[current_screen].name == name
 
+def previos_screen_is(name):
+	if current_screen >= len(screens) or\
+		current_screen - 1 < 0:
+		return False
+	return screens[current_screen - 1].name == name
+
 def set_current_screen(name):
 	global current_screen
 	for x in xrange(len(screens)):
@@ -113,9 +126,12 @@ photo_count = 1
 thread_take_photo = None
 thread_create_photo = None
 
-delayScreen = 'Screen6'
+delayScreen = SETTINGS['delay_screens']
 
 done = False
+COLLAGE = None
+py_image = None
+
 while done == False:
 	for event in pygame.event.get():
 		screens[current_screen].onevent(event)		
@@ -124,8 +140,9 @@ while done == False:
 				done = True
 		if event.type == pygame.QUIT:
 			done = True
-		if event.type == pygame.MOUSEBUTTONUP and current_screen_is('PreviewScreen'):
-			next_screen()
+		if event.type == pygame.MOUSEBUTTONUP and current_screen_is('PreviewScreen')\
+			and SETTINGS['preview_screen_delay'] == 0:
+			set_current_screen('EndScreen')
 			pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
 
 		if event.type == pygame.USEREVENT + 1:
@@ -137,7 +154,8 @@ while done == False:
 				t = threading.Thread(target=capture_photo, args=(photo_count, ))
 				thread_take_photo = t
 				t.start()
-				pygame.time.set_timer(pygame.USEREVENT + 1, 2000)
+				pygame.time.set_timer(pygame.USEREVENT + 1, 
+										SETTINGS['strike_a_pose_delay'])
 			
 			if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
 				photo_count += 1
@@ -145,25 +163,45 @@ while done == False:
 					set_current_screen(delayScreen)
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 					
-			if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
+			if previos_screen_is('WorkInProgress') and COLLAGE == None:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
 				#thread_create_photo = threading.Thread(target=create_photo, args=())
 				#thread_create_photo.start()
-				collage = create_photo()
+				COLLAGE = create_photo()
 				
-				mode = collage.mode
-				size = collage.size
-				data = collage.tobytes()
+				mode = COLLAGE.mode
+				size = COLLAGE.size
+				data = COLLAGE.tobytes()
 				py_image = pygame.image.fromstring(data, size, mode)
 				
-				picture = widgets.Picture(py_image, (137, 65))
-				screens[current_screen].controls.append(picture)
-				#pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+				if SETTINGS['preview_screen']:
+					set_current_screen('PreviewScreen')
+				else:
+					set_current_screen('EndScreen')
+					
+				if SETTINGS['preview_screen_delay'] != 0\
+					and SETTINGS['preview_screen']:
+					pygame.time.set_timer(pygame.USEREVENT + 1,
+											SETTINGS['preview_screen_delay'])
+											
+			if current_screen_is('WorkInProgress') and py_image == None\
+				and COLLAGE != None:
+					set_current_screen('EndScreen')
+
+			if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
+				if COLLAGE != None:
+					picture = widgets.Picture(py_image, (137, 65))
+					screens[current_screen].controls.append(picture)
+					py_image = None
+				else:
+					pygame.time.set_timer(pygame.USEREVENT + 1, 100)
+					set_current_screen('WorkInProgress')
 
 			if current_screen_is('EndScreen'):
-				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)			
+				pygame.time.set_timer(pygame.USEREVENT + 1,
+										SETTINGS['end_screen_delay'])
 
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
@@ -178,6 +216,8 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
 				photo_count = 1
 				thread_take_photo = None
+				COLLAGE = None
+				py_image = None
 				
 	screens[current_screen].render(window)
 	pygame.display.flip()
