@@ -1,6 +1,6 @@
 {
 	"print_format":"4x6",
-	"delay_screens":"Screen1",
+	"delay_screens":"Screen5",
 	"strike_a_pose_delay":2000,
 	"preview_screen":true,
 	"preview_screen_delay":0,
