@@ -59,10 +59,10 @@ def init(top, gui, *args, **kwargs):
     top_level = top
     root = top
     
-    camera.check_and_close_gvfs_gphoto()
+    ##camera.check_and_close_gvfs_gphoto()
     txtSAPVar.set(2000)
     gui.cbPrintFormat['values'] = ('4x6', '2x6')
-    lblCameraVar.set(camera.get_model())
+    ##lblCameraVar.set(camera.get_model())
 
 def destroy_window():
     # Function which closes the window.

@@ -8,12 +8,13 @@
 # Copyright:   (c) VoRoN 2017
 # Licence:     MIT
 #-------------------------------------------------------------------------------
-import pygame	
+import pygame
 
 class Screen:
-	def __init__(self, config):
+	def __init__(self, config, font_cache, image_cache):
 		self.name = config['name']
-		self.fontCache = FontCache()
+		self.fontCache = font_cache
+		self.imageCache = image_cache
 		self.background = tuple(config['background'])
 		self.controls = []
 		for label in (config['labels'] if config.has_key('labels') else []):
@@ -29,11 +30,19 @@ class Screen:
 			self.controls.append(Label(font.render(label['text'], True, tuple(label['color'])), tuple(label['position']), h, v))
 		
 		for picture in (config['pictures'] if config.has_key('pictures') else []):
-			image = pygame.image.load(picture['file'])
-			self.controls.append(Picture(image, picture['position']))
+			image = None
+			size = [0, 0]
+			name = ''
+			if picture.has_key('file'):
+				image = self.imageCache.getImage(picture['file'])
+			if picture.has_key('size'):
+				size = picture['size']
+			if picture.has_key('name'):
+				name = picture['name']
+			self.controls.append(Picture(image, picture['position'], size, name))
 			
 		for button in (config['buttons'] if config.has_key('buttons') else []):
-			image = pygame.image.load(button['image'])
+			image = self.imageCache.getImage(button['image'])
 			self.controls.append(Button(image, button['position'], button['event']))
 
 	def render(self, screen):
@@ -41,11 +50,18 @@ class Screen:
 		for control in self.controls:
 		    control.render(screen)
   		pygame.draw.rect(screen, (0, 0, 0), [3, 3, 794, 474], 2)
-  		
+	
 	def onevent(self, event):
 		for control in self.controls:
 		    if isinstance(control, Button):
 		    	control.onevent(event)
+		    	
+ 	def getControlByName(self, name):
+ 		for control in self.controls:
+ 			control_name = getattr(control, 'name', '')
+ 			if name == control_name:
+ 				return control
+		return None
 
 class Label:
 	def __init__(self, text, position, hcenter = False, vcenter = False):
@@ -92,7 +108,8 @@ class Button:
 		elif event.type == pygame.MOUSEBUTTONUP and\
 		event.button == 1 and self.state == Button.BTN_STATE_PUSHED:
 			if self.image.get_rect(center=self.center).collidepoint(event.pos):
-				pygame.event.post(pygame.event.Event(Button.EVENT_BUTTONCLICK, {'name':self.event}))
+				pygame.event.post(pygame.event.Event(Button.EVENT_BUTTONCLICK,
+									{'name':self.event}))
 			size = self.image.get_size()
 			new_size = self.image_pushed.get_size()
 			self.position = (self.position[0] - (size[0] - new_size[0]) / 2,
@@ -100,11 +117,26 @@ class Button:
 			self.state = Button.BTN_STATE_NORM
 			
 class Picture:
-	def __init__(self, image, position):
+	def __init__(self, image, position, size, name):
 		self.image = image
 		self.position = position
+		self.size = size
+		self.name = name
 	def render(self, screen):
-		screen.blit(self.image, self.position)
+		if self.image != None:
+			screen.blit(self.image, self.position)
+
+class ImageCache:
+	def __init__(self):
+		self.images = []
+		
+	def getImage(self, image_path):
+		for image in self.images:
+			if image['path'] == image_path:
+				return image['image']
+		image = pygame.image.load(image_path)
+		self.images.append({'path':image_path, 'image':image})
+		return image
 
 class FontCache:
 	def __init__(self):
@@ -114,8 +146,7 @@ class FontCache:
 		for font in self.fonts:
 			if font['name'] == name and font['size'] == size:
 				return font['font']
-			else:
-				return None
+		return None
 
 	def addFont(self, name, size, font):
 		self.fonts.append({'name':name, 'size':size, 'font':font})

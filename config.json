@@ -135,6 +135,17 @@
 	"pictures":[{
 		"file":"img/frame.png",
 		"position":[0, 0]
+	},
+	{
+		"comment":"Is a preview picture position and size",
+		"name":"preview",
+		"position":[175, 50],
+		"size":[300, 450]
+	}],
+	"buttons":[{
+		"image":"img/print_btn.png",
+		"position":[275, 375],
+		"event":"btnPrintClick"
 	}],
 	"background": [139, 174, 233]
 }, {

@@ -13,38 +13,35 @@
 import os
 os.environ['PYGAME_FREETYPE'] = ''
 import pygame
-from virtualKeyboard import VirtualKeyboard
 import widgets
 import json
 from PIL import Image, ImageDraw, ImageFont
 import threading, thread
 import datetime
 import camera
-
-SETTINGS = {
-	'print_format':'4x6',
-	'delay_screens':'Screen1',
-	'strike_a_pose_delay':2000,
-	'preview_screen':True,
-	'preview_screen_delay':0,
-	'end_screen_delay':5000
-}
+import subprocess
 
 WIN32 = (os.name != 'posix')
 
+
+SETTINGS = {}
 SCENES = []
 with open('config.json', 'r') as f:
 	SCENES = json.loads(f.read())
+with open('settings.json', 'r') as f:
+	SETTINGS = json.loads(f.read())
 
 pygame.init()
-#pygame.mouse.set_visible(0)
+pygame.mouse.set_visible(SETTINGS['show_mouse'])
 
 screens = []
 current_screen = 0
 TMP_FOLDER = 'tmp'
 
+font_cache = widgets.FontCache()
+image_cache = widgets.ImageCache()
 for item in SCENES:
-	screens.append(widgets.Screen(item))
+	screens.append(widgets.Screen(item, font_cache, image_cache))
 
 window_prop = pygame.HWSURFACE
 if not WIN32:
@@ -53,6 +50,36 @@ if not WIN32:
 
 window = pygame.display.set_mode((800, 480), window_prop, 32)
 clock = pygame.time.Clock()
+
+def current_screen_is(name):
+	if current_screen >= len(screens):
+		return False
+	return screens[current_screen].name == name
+
+def previos_screen_is(name):
+	if current_screen >= len(screens) or\
+		current_screen - 1 < 0:
+		return False
+	return screens[current_screen - 1].name == name
+
+def set_current_screen(name):
+	global current_screen
+	for x in xrange(len(screens)):
+		if screens[x].name == name:
+			current_screen = x
+			break
+
+def get_screen_by_name(name):
+	for x in xrange(len(screens)):
+		if screens[x].name == name:
+			return screens[x]
+	return None
+
+def next_screen():
+	global current_screen
+	current_screen += 1
+
+result_file_name = ''
 
 def create_photo():
 	if not WIN32:
@@ -93,38 +120,22 @@ def create_photo():
 	filename = os.path.join(path, 'result_%s_%s.jpg' %
 				(today.date().isoformat(), today.time().strftime('%H-%M-%S')))
 	image.save(filename)
-	return image.resize((350, 525)).transpose(Image.ROTATE_90)
+	result_file_name = filename
+	
+	if SETTINGS['preview_screen']:
+		screen = get_screen_by_name('PreviewScreen')
+		preview_picture = screen.getControlByName('preview')
+		return image.resize(tuple(preview_picture.size)).transpose(Image.ROTATE_90)
+	else:
+		return None
 			
 def capture_photo(number):
 	if not WIN32:
 		camera.trigger_capture()
-		
-def current_screen_is(name):
-	if current_screen >= len(screens):
-		return False
-	return screens[current_screen].name == name
-
-def previos_screen_is(name):
-	if current_screen >= len(screens) or\
-		current_screen - 1 < 0:
-		return False
-	return screens[current_screen - 1].name == name
-
-def set_current_screen(name):
-	global current_screen
-	for x in xrange(len(screens)):
-		if screens[x].name == name:
-			current_screen = x
-			break
-
-def next_screen():
-	global current_screen
-	current_screen += 1
 
 TAKE_PHOTO = 4
 photo_count = 1
 thread_take_photo = None
-thread_create_photo = None
 
 delayScreen = SETTINGS['delay_screens']
 
@@ -167,8 +178,6 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
-				#thread_create_photo = threading.Thread(target=create_photo, args=())
-				#thread_create_photo.start()
 				COLLAGE = create_photo()
 				
 				mode = COLLAGE.mode
@@ -192,8 +201,8 @@ while done == False:
 
 			if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
 				if COLLAGE != None:
-					picture = widgets.Picture(py_image, (137, 65))
-					screens[current_screen].controls.append(picture)
+					picture = screens[current_screen].getControlByName('preview')
+					picture.image = py_image
 					py_image = None
 				else:
 					pygame.time.set_timer(pygame.USEREVENT + 1, 100)
@@ -205,7 +214,6 @@ while done == False:
 
 			if current_screen == len(screens):
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
-				#thread_create_photo.join()
 				set_current_screen('MainScreen')
 				
 		if event.type == widgets.Button.EVENT_BUTTONCLICK:
@@ -218,6 +226,15 @@ while done == False:
 				thread_take_photo = None
 				COLLAGE = None
 				py_image = None
+				result_file_name = ''
+				
+			if event.name == 'btnPrintClick':
+				print 'Print photo'
+				sub = subprocess.Popen(['lp','-d','MITSUBISHI_CPD80D',
+								result_file_name],
+								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+								shell=False)
+				err = sub.stderr.read()
 				
 	screens[current_screen].render(window)
 	pygame.display.flip()
