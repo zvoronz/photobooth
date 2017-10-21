@@ -81,37 +81,91 @@ def next_screen():
 
 result_file_name = ''
 
-def create_photo():
+PHOTO_FORMAT = [{
+	'name':'4x6 simple',
+	'format':[4, 6],
+	'dpi':300,
+	'background_color':[255, 0, 255],
+	'components':[{
+		'type':'image',
+		'file':'capt0001.jpg',
+		'position':[100, 120],
+		'size':[750, 500],
+		'angle':270
+		},{
+		'type':'image',
+		'file':'capt0002.jpg',
+		'position':[100, 930],
+		'size':[750, 500],
+		'angle':270
+		},{
+		'type':'image',
+		'file':'capt0003.jpg',
+		'position':[660, 120],
+		'size':[750, 500],
+		'angle':270
+		},{
+		'type':'image',
+		'file':'capt0004.jpg',
+		'position':[660, 930],
+		'size':[750, 500],
+		'angle':245
+		},{
+		'type':'label',
+		'font':'fonts/arial.ttf',
+		'font_size':80,
+		'text':'www.snappycampers.co.uk',
+		'text_color':[0, 0, 0],
+		'position':[25, 600],
+		'angle':270
+		}]
+}]
+
+def getFilePath(filename):
+	in_tmp_folder = os.path.join(TMP_FOLDER, filename)
+	in_img_folder = os.path.join('img', filename)
+	if os.path.exists(in_img_folder):
+		return in_img_folder
+	if os.path.exists(in_tmp_folder):
+		return in_tmp_folder
+
+def create_photo(photo_config):
 	if not WIN32:
 		filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
 		camera.get_all_files(filepattern)
 		thread.start_new_thread(camera.delete_all_files, ())
+	photo_format = tuple(map(lambda x: photo_config['dpi'] * x, photo_config['format']))
 	
-	F4x6 = (4 * 300, 6 * 300)
-	image = Image.new('RGB', F4x6, (255, 255, 255))
-	positions = [(100, 120), (100, 120 + 750 + 60), (100 + 60 + 500, 120),\
-				(100 + 60 + 500, 120 + 750 + 60)]
-	for i in xrange(1, 5):
-		photo = Image.open(os.path.join(TMP_FOLDER, 'capt000%d.jpg' % i))
-		photo = photo.resize((750, 500))
-		photo = photo.transpose(Image.ROTATE_270)
-		image.paste(photo, positions[i - 1])
+	image = Image.new('RGB', photo_format, tuple(photo_config['background_color']))
+	
+	for item in photo_config['components']:
+		item_type = item['type']
 		
-		del photo
-		
-	font = ImageFont.truetype("fonts/arial.ttf", 50)
-	d = ImageDraw.Draw(image)
-	size = d.textsize('www.snappycampers.co.uk', font)
-	
-	text = Image.new('RGBA', size, (255, 255, 255, 255))
-	dt = ImageDraw.Draw(text)
-	dt.text((0, 0), 'www.snappycampers.co.uk', (0, 0, 0), font)
-	text = text.transpose(Image.ROTATE_270)
-	
-	image.paste(text, (10, 1800 / 2 - size[0] / 2))
-	
-	del d
-	del dt
+		if item_type == 'image':
+			picture = item
+			photo_name = getFilePath(picture['file'])
+			photo = Image.open(photo_name)
+			photo = photo.resize(tuple(picture['size']))
+			photo = photo.convert('RGBA')
+			photo = photo.rotate(picture['angle'], expand=True)
+			image.paste(photo, tuple(picture['position']), photo)
+			del photo
+			
+		if item_type == 'label':
+			text_line = item['text']
+			font = ImageFont.truetype(item['font'], item['font_size'])
+			d = ImageDraw.Draw(image)
+			size = d.textsize(text_line, font)
+			
+			text = Image.new('RGBA', size, (255, 255, 255, 0))
+			dt = ImageDraw.Draw(text)
+			dt.text((0, 0), text_line, tuple(item['text_color']), font)
+			text = text.rotate(item['angle'], expand=True)
+			
+			image.paste(text, tuple(item['position']), text)
+			
+			del d
+			del dt
 	
 	today = datetime.datetime.today()
 	path = os.path.join(TMP_FOLDER,'results')
@@ -178,7 +232,7 @@ while done == False:
 				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
 				if thread_take_photo != None:
 					thread_take_photo.join()
-				COLLAGE = create_photo()
+				COLLAGE = create_photo(PHOTO_FORMAT[0])
 				
 				mode = COLLAGE.mode
 				size = COLLAGE.size

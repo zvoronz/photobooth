@@ -71,8 +71,10 @@ class Label:
 		self.vcenter = vcenter
 
 	def render(self, screen):
-		position = (screen.get_width() / 2 - self.text.get_width() / 2 if self.hcenter else self.position[0],
-					screen.get_height() / 2 - self.text.get_height() / 2 if self.vcenter else self.position[1])
+		position = (screen.get_width() / 2 - self.text.get_width() / 2 if
+											 self.hcenter else self.position[0],
+					screen.get_height() / 2 - self.text.get_height() / 2 if
+											self.vcenter else self.position[1])
 		screen.blit(self.text, position)
 
 class Button:
