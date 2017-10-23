@@ -1,0 +1,47 @@
+[
+    {
+		"name": "4x6 simple",
+        "dpi": 300, 
+        "format": [4, 6],
+        "background_color": [255, 255, 255],
+        "components": [
+            {
+                "position": [100, 120], 
+                "angle": 270, 
+                "type": "image", 
+                "file": "capt0001.jpg", 
+                "size": [750, 500]
+            }, 
+            {
+                "position": [100, 930], 
+                "angle": 270, 
+                "type": "image", 
+                "file": "capt0002.jpg", 
+                "size": [750, 500]
+            }, 
+            {
+                "position": [660, 120], 
+                "angle": 270, 
+                "type": "image", 
+                "file": "capt0003.jpg", 
+                "size": [750, 500]
+            }, 
+            {
+                "position": [660, 930], 
+                "angle": 245, 
+                "type": "image", 
+                "file": "capt0004.jpg", 
+                "size": [750, 500]
+            }, 
+            {
+                "font_size": 80, 
+                "angle": 270, 
+                "text": "www.snappycampers.co.uk", 
+                "text_color": [0, 0, 0], 
+                "position": [25, 600], 
+                "font": "fonts/arial.ttf", 
+                "type": "label"
+            }
+        ]
+    }
+]
