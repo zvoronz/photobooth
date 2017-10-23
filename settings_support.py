@@ -86,9 +86,9 @@ def init(top, gui, *args, **kwargs):
 	top_level = top
 	root = top
 	
-if not WIN32:	
-	camera.check_and_close_gvfs_gphoto()
-	lblCameraVar.set(camera.get_model())
+	if not WIN32:	
+		camera.check_and_close_gvfs_gphoto()
+		lblCameraVar.set(camera.get_model())
 	
 	global SETTINGS
 	SETTINGS = {}
