@@ -9,6 +9,10 @@ import sys, os
 import camera
 import json
 import re
+import PIL.ImageTk
+from PIL import Image, ImageDraw, ImageFont
+
+WIN32 = (os.name != 'posix')
 
 try:
 	from Tkinter import *
@@ -65,8 +69,16 @@ def onBtnSaveConfig():
 	root.destroy()
 
 def onBtnTakePhoto():
-	print('settings_support.onBtnTakePhoto')
-	sys.stdout.flush()
+	path = '/tmp/phototest.jpg'
+	if not WIN32:
+		camera.capture_and_download_photo(path)
+	else:
+		path = path[1:]
+	photo = PIL.Image.open(path)
+	photo = photo.resize((186, 153))
+	img1 = PIL.ImageTk.PhotoImage(photo)
+	w.Canvas1.create_image(0, 0, image=img1, anchor=NW)
+	w.Canvas1.image = img1
 
 def init(top, gui, *args, **kwargs):
 	global w, top_level, root
@@ -74,8 +86,9 @@ def init(top, gui, *args, **kwargs):
 	top_level = top
 	root = top
 	
-	##camera.check_and_close_gvfs_gphoto()
-	##lblCameraVar.set(camera.get_model())
+if not WIN32:	
+	camera.check_and_close_gvfs_gphoto()
+	lblCameraVar.set(camera.get_model())
 	
 	global SETTINGS
 	SETTINGS = {}
