@@ -174,6 +174,7 @@ def create_photo(photo_config):
 	filename = os.path.join(path, 'result_%s_%s.jpg' %
 				(today.date().isoformat(), today.time().strftime('%H-%M-%S')))
 	image.save(filename)
+	global result_file_name
 	result_file_name = filename
 	
 	if SETTINGS['preview_screen']:
@@ -289,6 +290,7 @@ while done == False:
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 				err = sub.stderr.read()
+				print err
 				
 	screens[current_screen].render(window)
 	pygame.display.flip()
