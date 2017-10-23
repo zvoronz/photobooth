@@ -71,6 +71,9 @@ for item in SCENES:
 	screens.append(widgets.Screen(item, font_cache, image_cache))
 
 window_prop = pygame.HWSURFACE
+if not WIN32:
+	window_prop |= pygame.FULLSCREEN
+
 window = pygame.display.set_mode((800, 480), window_prop, 32)
 clock = pygame.time.Clock()
 
