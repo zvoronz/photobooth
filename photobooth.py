@@ -23,13 +23,32 @@ import subprocess
 
 WIN32 = (os.name != 'posix')
 
+def getFilePath(filename):
+	in_tmp_folder = os.path.join(TMP_FOLDER, filename)
+	in_img_folder = os.path.join('img', filename)
+	in_formats_folder = os.path.join('formats', filename)
+	if os.path.exists(in_img_folder):
+		return in_img_folder
+	if os.path.exists(in_tmp_folder):
+		return in_tmp_folder
+	if os.path.exists(in_formats_folder):
+		return in_formats_folder
 
 SETTINGS = {}
 SCENES = []
+PHOTO_FORMAT = []
 with open('config.json', 'r') as f:
 	SCENES = json.loads(f.read())
 with open('settings.json', 'r') as f:
 	SETTINGS = json.loads(f.read())
+with open(getFilePath(fileName), 'r') as f:
+	with open(fileName, 'r') as f:
+		frmt = json.loads(f.read())
+		if isinstance(frmt, list):
+			PHOTO_FORMAT += frmt
+		else:
+			PHOTO_FORMAT.append(frmt)
+		
 
 pygame.init()
 pygame.mouse.set_visible(SETTINGS['show_mouse'])
@@ -80,54 +99,6 @@ def next_screen():
 	current_screen += 1
 
 result_file_name = ''
-
-PHOTO_FORMAT = [{
-	'name':'4x6 simple',
-	'format':[4, 6],
-	'dpi':300,
-	'background_color':[255, 0, 255],
-	'components':[{
-		'type':'image',
-		'file':'capt0001.jpg',
-		'position':[100, 120],
-		'size':[750, 500],
-		'angle':270
-		},{
-		'type':'image',
-		'file':'capt0002.jpg',
-		'position':[100, 930],
-		'size':[750, 500],
-		'angle':270
-		},{
-		'type':'image',
-		'file':'capt0003.jpg',
-		'position':[660, 120],
-		'size':[750, 500],
-		'angle':270
-		},{
-		'type':'image',
-		'file':'capt0004.jpg',
-		'position':[660, 930],
-		'size':[750, 500],
-		'angle':245
-		},{
-		'type':'label',
-		'font':'fonts/arial.ttf',
-		'font_size':80,
-		'text':'www.snappycampers.co.uk',
-		'text_color':[0, 0, 0],
-		'position':[25, 600],
-		'angle':270
-		}]
-}]
-
-def getFilePath(filename):
-	in_tmp_folder = os.path.join(TMP_FOLDER, filename)
-	in_img_folder = os.path.join('img', filename)
-	if os.path.exists(in_img_folder):
-		return in_img_folder
-	if os.path.exists(in_tmp_folder):
-		return in_tmp_folder
 
 def create_photo(photo_config):
 	if not WIN32:

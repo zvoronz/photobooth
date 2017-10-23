@@ -148,7 +148,7 @@ proc vTclWindow.top37 {base} {
         -activebackground {#f9f9f9} -activeforeground black \
         -background {#d9d9d9} -disabledforeground {#a3a3a3} \
         -foreground {#000000} -highlightbackground {#d9d9d9} \
-        -highlightcolor black -justify right -text Printer: -width 64 
+        -highlightcolor black -justify right -text Printer: -width 54 
     vTcl:DefineAlias "$top.cpd56" "Label2" vTcl:WidgetProc "Toplevel1" 1
     label $top.cpd57 \
         -activebackground {#f9f9f9} -activeforeground black \
@@ -203,7 +203,7 @@ proc vTclWindow.top37 {base} {
         -in $top -x 440 -y 330 -width 127 -relwidth 0 -height 44 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tLa48 \
-        -in $top -x 1 -y 115 -width 131 -relwidth 0 -height 19 -relheight 0 \
+        -in $top -x 42 -y 113 -width 81 -relwidth 0 -height 19 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tCo49 \
         -in $top -x 140 -y 114 -width 64 -relwidth 0 -height 21 -relheight 0 \
@@ -212,7 +212,7 @@ proc vTclWindow.top37 {base} {
         -in $top -x 510 -y 8 -width 67 -relwidth 0 -height 24 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab40 \
-        -in $top -x 4 -y 145 -width 130 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 14 -y 145 -width 120 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.tCo43 \
         -in $top -x 140 -y 146 -width 64 -relwidth 0 -height 21 -relheight 0 \
@@ -236,7 +236,7 @@ proc vTclWindow.top37 {base} {
         -in $top -x 0 -y 10 -width 64 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode inside 
     place $top.cpd56 \
-        -in $top -x 3 -y 40 -width 64 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 8 -y 40 -width 54 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.cpd57 \
         -in $top -x 81 -y 10 -width 424 -height 21 -anchor nw \
@@ -248,10 +248,10 @@ proc vTclWindow.top37 {base} {
         -in $top -x 510 -y 38 -width 67 -relwidth 0 -height 24 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.che61 \
-        -in $top -x 259 -y 110 -width 141 -relwidth 0 -height 25 -relheight 0 \
+        -in $top -x 229 -y 110 -width 171 -relwidth 0 -height 25 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab62 \
-        -in $top -x 250 -y 140 -width 147 -relwidth 0 -height 21 -relheight 0 \
+        -in $top -x 275 -y 140 -width 117 -relwidth 0 -height 21 -relheight 0 \
         -anchor nw -bordermode ignore 
     place $top.lab63 \
         -in $top -x 250 -y 170 -width 148 -relwidth 0 -height 21 -relheight 0 \
