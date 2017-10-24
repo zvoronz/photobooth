@@ -213,10 +213,12 @@ while done == False:
 					thread_take_photo.join()
 				COLLAGE = create_photo(selected_format)
 				
-				mode = COLLAGE.mode
-				size = COLLAGE.size
-				data = COLLAGE.tobytes()
-				py_image = pygame.image.fromstring(data, size, mode)
+				py_image = None
+				if COLLAGE != None:
+					mode = COLLAGE.mode
+					size = COLLAGE.size
+					data = COLLAGE.tobytes()
+					py_image = pygame.image.fromstring(data, size, mode)
 				
 				if SETTINGS['preview_screen']:
 					set_current_screen('PreviewScreen')

@@ -28,17 +28,17 @@
             }, 
             {
                 "position": [660, 930], 
-                "angle": 245, 
+                "angle": 270, 
                 "type": "image", 
                 "file": "capt0004.jpg", 
                 "size": [750, 500]
             }, 
             {
-                "font_size": 80, 
+                "font_size": 75, 
                 "angle": 270, 
                 "text": "www.snappycampers.co.uk", 
                 "text_color": [0, 0, 0], 
-                "position": [25, 600], 
+                "position": [25, 525],
                 "font": "fonts/arial.ttf", 
                 "type": "label"
             }
