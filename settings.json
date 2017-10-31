@@ -3,7 +3,7 @@
     "strike_a_pose_delay": 2000, 
     "preview_screen": true, 
     "show_mouse": true, 
-    "delay_screens": "Screen1", 
+    "delay_screens": "Screen5", 
     "preview_screen_delay": 0, 
-    "print_format": "2x6+frame"
+    "print_format": "4x6 simple"
 }

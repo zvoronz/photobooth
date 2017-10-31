@@ -34,11 +34,11 @@
                 "size": [750, 500]
             }, 
             {
-                "font_size": 75, 
+                "font_size": 50, 
                 "angle": 270, 
                 "text": "www.snappycampers.co.uk", 
                 "text_color": [0, 0, 0], 
-                "position": [25, 525],
+                "position": [25, 580],
                 "font": "fonts/arial.ttf", 
                 "type": "label"
             }

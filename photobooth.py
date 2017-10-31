@@ -24,8 +24,22 @@ import subprocess
 WIN32 = (os.name != 'posix')
 TMP_FOLDER = 'tmp'
 if not WIN32:
-	window_prop = pygame.FULLSCREEN
 	TMP_FOLDER = '/tmp'
+SETTINGS = {}
+SCENES = []
+PHOTO_FORMAT = []
+screens = []
+current_screen = 0
+result_file_name = ''
+TAKE_PHOTO = 4
+photo_count = 1
+thread_take_photo = None
+
+delayScreen = 'Screen5'
+
+done = False
+COLLAGE = None
+py_image = None
 
 def getFilePath(filename):
 	in_tmp_folder = os.path.join(TMP_FOLDER, filename)
@@ -37,45 +51,6 @@ def getFilePath(filename):
 		return in_tmp_folder
 	if os.path.exists(in_formats_folder):
 		return in_formats_folder
-
-SETTINGS = {}
-SCENES = []
-PHOTO_FORMAT = []
-with open('config.json', 'r') as f:
-	SCENES = json.loads(f.read())
-with open('settings.json', 'r') as f:
-	SETTINGS = json.loads(f.read())
-for fileName in os.listdir('formats'):
-	with open(getFilePath(fileName), 'r') as f:
-		frmt = json.loads(f.read())
-		if isinstance(frmt, list):
-			PHOTO_FORMAT += frmt
-		else:
-			PHOTO_FORMAT.append(frmt)
-		
-
-pygame.init()
-pygame.mouse.set_visible(SETTINGS['show_mouse'])
-
-screens = []
-current_screen = 0
-selected_format = PHOTO_FORMAT[0]
-
-for frmt in PHOTO_FORMAT:
-	if frmt['name'] == SETTINGS['print_format']:
-		selected_format = frmt
-
-font_cache = widgets.FontCache()
-image_cache = widgets.ImageCache()
-for item in SCENES:
-	screens.append(widgets.Screen(item, font_cache, image_cache))
-
-window_prop = pygame.HWSURFACE
-if not WIN32:
-	window_prop |= pygame.FULLSCREEN
-
-window = pygame.display.set_mode((800, 480), window_prop, 32)
-clock = pygame.time.Clock()
 
 def current_screen_is(name):
 	if current_screen >= len(screens):
@@ -104,8 +79,6 @@ def get_screen_by_name(name):
 def next_screen():
 	global current_screen
 	current_screen += 1
-
-result_file_name = ''
 
 def create_photo(photo_config):
 	if not WIN32:
@@ -166,113 +139,146 @@ def capture_photo(number):
 	if not WIN32:
 		camera.trigger_capture()
 
-TAKE_PHOTO = 4
-photo_count = 1
-thread_take_photo = None
+def main():
+	global WIN32, TMP_FOLDER, SETTINGS, SCENES, PHOTO_FORMAT, screens,\
+		current_screen, result_file_name, TAKE_PHOTO, photo_count,\
+		thread_take_photo, delayScreen, done, COLLAGE, py_image
+	
+	with open('config.json', 'r') as f:
+		SCENES = json.loads(f.read())
+	with open('settings.json', 'r') as f:
+		SETTINGS = json.loads(f.read())
+	for fileName in os.listdir('formats'):
+		with open(getFilePath(fileName), 'r') as f:
+			frmt = json.loads(f.read())
+			if isinstance(frmt, list):
+				PHOTO_FORMAT += frmt
+			else:
+				PHOTO_FORMAT.append(frmt)
+			
+	
+	pygame.init()
+	pygame.mouse.set_visible(SETTINGS['show_mouse'])
+	
+	selected_format = PHOTO_FORMAT[0]
 
-delayScreen = SETTINGS['delay_screens']
-
-done = False
-COLLAGE = None
-py_image = None
-
-while done == False:
-	for event in pygame.event.get():
-		screens[current_screen].onevent(event)		
-		if event.type == pygame.KEYUP:
-			if event.key == pygame.K_ESCAPE:
+	for frmt in PHOTO_FORMAT:
+		if frmt['name'] == SETTINGS['print_format']:
+			selected_format = frmt
+	
+	font_cache = widgets.FontCache()
+	image_cache = widgets.ImageCache()
+	for item in SCENES:
+		screens.append(widgets.Screen(item, font_cache, image_cache))
+	
+	window_prop = pygame.HWSURFACE
+	if not WIN32:
+		window_prop |= pygame.FULLSCREEN
+	
+	window = pygame.display.set_mode((800, 480), window_prop, 32)
+	clock = pygame.time.Clock()
+	
+	delayScreen = SETTINGS['delay_screens']
+	while done == False:
+		for event in pygame.event.get():
+			screens[current_screen].onevent(event)		
+			if event.type == pygame.KEYUP:
+				if event.key == pygame.K_ESCAPE:
+					done = True
+			if event.type == pygame.QUIT:
 				done = True
-		if event.type == pygame.QUIT:
-			done = True
-		if event.type == pygame.MOUSEBUTTONUP and current_screen_is('PreviewScreen')\
-			and SETTINGS['preview_screen_delay'] == 0:
-			set_current_screen('EndScreen')
-			pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
-
-		if event.type == pygame.USEREVENT + 1:
-			next_screen()
-			
-			if current_screen_is('StrikeAPoseScreen'):
-				if thread_take_photo != None:
-					thread_take_photo.join()
-				t = threading.Thread(target=capture_photo, args=(photo_count, ))
-				thread_take_photo = t
-				t.start()
-				pygame.time.set_timer(pygame.USEREVENT + 1, 
-										SETTINGS['strike_a_pose_delay'])
-			
-			if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
-				photo_count += 1
-				if photo_count <= TAKE_PHOTO:
+			if event.type == pygame.MOUSEBUTTONUP and current_screen_is('PreviewScreen')\
+				and SETTINGS['preview_screen_delay'] == 0:
+				set_current_screen('EndScreen')
+				pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+	
+			if event.type == pygame.USEREVENT + 1:
+				next_screen()
+				
+				if current_screen_is('StrikeAPoseScreen'):
+					if thread_take_photo != None:
+						thread_take_photo.join()
+					t = threading.Thread(target=capture_photo, args=(photo_count, ))
+					thread_take_photo = t
+					t.start()
+					pygame.time.set_timer(pygame.USEREVENT + 1, 
+											SETTINGS['strike_a_pose_delay'])
+				
+				if current_screen_is('PreviewScreen') and photo_count < TAKE_PHOTO:
+					photo_count += 1
+					if photo_count <= TAKE_PHOTO:
+						set_current_screen(delayScreen)
+						pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
+						
+				if previos_screen_is('WorkInProgress') and COLLAGE == None:
+					pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+					if thread_take_photo != None:
+						thread_take_photo.join()
+					COLLAGE = create_photo(selected_format)
+					
+					py_image = None
+					if COLLAGE != None:
+						mode = COLLAGE.mode
+						size = COLLAGE.size
+						data = COLLAGE.tobytes()
+						py_image = pygame.image.fromstring(data, size, mode)
+					
+					if SETTINGS['preview_screen']:
+						set_current_screen('PreviewScreen')
+					else:
+						set_current_screen('EndScreen')
+						
+					if SETTINGS['preview_screen_delay'] != 0\
+						and SETTINGS['preview_screen']:
+						pygame.time.set_timer(pygame.USEREVENT + 1,
+												SETTINGS['preview_screen_delay'])
+												
+				if current_screen_is('WorkInProgress') and py_image == None\
+					and COLLAGE != None:
+						set_current_screen('EndScreen')
+	
+				if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
+					if COLLAGE != None:
+						picture = screens[current_screen].getControlByName('preview')
+						picture.image = py_image
+						py_image = None
+					else:
+						pygame.time.set_timer(pygame.USEREVENT + 1, 100)
+						set_current_screen('WorkInProgress')
+	
+				if current_screen_is('EndScreen'):
+					pygame.time.set_timer(pygame.USEREVENT + 1,
+											SETTINGS['end_screen_delay'])
+	
+				if current_screen == len(screens):
+					pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+					set_current_screen('MainScreen')
+					
+			if event.type == widgets.Button.EVENT_BUTTONCLICK:
+				if event.name == 'btnStartClick':
+					if not WIN32:
+						camera.check_and_close_gvfs_gphoto()
 					set_current_screen(delayScreen)
 					pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
-					
-			if previos_screen_is('WorkInProgress') and COLLAGE == None:
-				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
-				if thread_take_photo != None:
-					thread_take_photo.join()
-				COLLAGE = create_photo(selected_format)
-				
-				py_image = None
-				if COLLAGE != None:
-					mode = COLLAGE.mode
-					size = COLLAGE.size
-					data = COLLAGE.tobytes()
-					py_image = pygame.image.fromstring(data, size, mode)
-				
-				if SETTINGS['preview_screen']:
-					set_current_screen('PreviewScreen')
-				else:
-					set_current_screen('EndScreen')
-					
-				if SETTINGS['preview_screen_delay'] != 0\
-					and SETTINGS['preview_screen']:
-					pygame.time.set_timer(pygame.USEREVENT + 1,
-											SETTINGS['preview_screen_delay'])
-											
-			if current_screen_is('WorkInProgress') and py_image == None\
-				and COLLAGE != None:
-					set_current_screen('EndScreen')
-
-			if current_screen_is('PreviewScreen') and photo_count >= TAKE_PHOTO:
-				if COLLAGE != None:
-					picture = screens[current_screen].getControlByName('preview')
-					picture.image = py_image
+					photo_count = 1
+					thread_take_photo = None
+					COLLAGE = None
 					py_image = None
-				else:
-					pygame.time.set_timer(pygame.USEREVENT + 1, 100)
-					set_current_screen('WorkInProgress')
-
-			if current_screen_is('EndScreen'):
-				pygame.time.set_timer(pygame.USEREVENT + 1,
-										SETTINGS['end_screen_delay'])
-
-			if current_screen == len(screens):
-				pygame.time.set_timer(pygame.USEREVENT + 1, 0)
-				set_current_screen('MainScreen')
-				
-		if event.type == widgets.Button.EVENT_BUTTONCLICK:
-			if event.name == 'btnStartClick':
-				if not WIN32:
-					camera.check_and_close_gvfs_gphoto()
-				set_current_screen(delayScreen)
-				pygame.time.set_timer(pygame.USEREVENT + 1, 1000)
-				photo_count = 1
-				thread_take_photo = None
-				COLLAGE = None
-				py_image = None
-				result_file_name = ''
-				
-			if event.name == 'btnPrintClick':
-				print 'Print photo'
-				sub = subprocess.Popen(['lp','-d','MITSUBISHI_CPD80D',
-								result_file_name],
-								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-								shell=False)
-				err = sub.stderr.read()
-				print err
-				
-	screens[current_screen].render(window)
-	pygame.display.flip()
-	clock.tick(60)
-pygame.quit()
+					result_file_name = ''
+					
+				if event.name == 'btnPrintClick':
+					print 'Print photo'
+					sub = subprocess.Popen(['lp','-d','MITSUBISHI_CPD80D',
+									result_file_name],
+									stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+									shell=False)
+					err = sub.stderr.read()
+					print err
+					
+		screens[current_screen].render(window)
+		pygame.display.flip()
+		clock.tick(60)
+	pygame.quit()
+	
+if __name__ == '__main__':
+    main()

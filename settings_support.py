@@ -11,8 +11,11 @@ import json
 import re
 import PIL.ImageTk
 from PIL import Image, ImageDraw, ImageFont
+import photobooth
+from photobooth import create_photo
 
 WIN32 = (os.name != 'posix')
+PHOTO_FORMAT = []
 
 try:
 	from Tkinter import *
@@ -50,8 +53,38 @@ def onBtnCameraUpdate():
 	lblCameraVar.set(camera.get_model())
 	
 def onPreviewPrintStyle():
-	pass
+	PHOTO_FORMAT = []
+	for fileName in os.listdir('formats'):
+		with open(os.path.join('formats', fileName), 'r') as f:
+			frmt = json.loads(f.read())
+			if isinstance(frmt, list):
+				PHOTO_FORMAT += frmt
+			else:
+				PHOTO_FORMAT.append(frmt)
+	
+	selected_format = PHOTO_FORMAT[0]
 
+	for frmt in PHOTO_FORMAT:
+		if frmt['name'] == combobox.get():
+			selected_format = frmt
+	photobooth.SETTINGS['preview_screen'] = False		
+	create_photo(selected_format)
+	f = photobooth.result_file_name
+	
+	master = Toplevel()
+	canvas_width = 600
+	canvas_height = 400
+	canv = Canvas(master,
+	           width=canvas_width,
+	           height=canvas_height)
+	canv.pack()
+	photo = PIL.Image.open(f)
+	photo = photo.rotate(90, expand=True)
+	photo = photo.resize((canvas_width, canvas_height))
+	img1 = PIL.ImageTk.PhotoImage(photo)
+	canv.create_image(0, 0, image=img1, anchor=NW)
+	canv.image = img1
+	
 def onBtnPrinterUpdate():
 	print('settings_support.onBtnPrinterUpdate')
 	sys.stdout.flush()
@@ -93,7 +126,7 @@ def init(top, gui, *args, **kwargs):
 	global SETTINGS
 	SETTINGS = {}
 	SCENES = []
-	PHOTO_FORMAT = []
+	global PHOTO_FORMAT
 	
 	for fileName in os.listdir('formats'):
 		with open(os.path.join('formats', fileName), 'r') as f:
@@ -110,7 +143,8 @@ def init(top, gui, *args, **kwargs):
    	
    	with open('settings.json', 'r') as f:
 		SETTINGS = json.loads(f.read())
-		
+	photobooth.SETTINGS = SETTINGS
+	
 	with open('config.json', 'r') as f:
 		SCENES = json.loads(f.read())
 
