@@ -179,9 +179,10 @@ def main():
 	clock = pygame.time.Clock()
 	
 	delayScreen = SETTINGS['delay_screens']
+	set_current_screen('MainScreen')
 	while done == False:
 		for event in pygame.event.get():
-			screens[current_screen].onevent(event)		
+			screens[current_screen].onevent(event)
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
 					done = True
@@ -269,13 +270,24 @@ def main():
 				if event.name == 'btnPrintClick':
 					print 'Print photo'
 					sub = subprocess.Popen(['lp','-d','MITSUBISHI_CPD80D',
-									result_file_name],
-									stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-									shell=False)
+								result_file_name],
+								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+								shell=False)
 					err = sub.stderr.read()
 					print err
+				
+				if event.name == 'btnOptionsClick':
+					if current_screen_is('OptionsScreen'):
+						set_current_screen('MainScreen')
+					else:
+						set_current_screen('OptionsScreen')
 					
 		screens[current_screen].render(window)
+		for textedit in \
+			screens[current_screen].getControlsByType(widgets.TextEdit):
+			if textedit.keyboard.state > 0:
+				textedit.keyboard.invalidate()
+				textedit.keyboard.on_event(event)
 		pygame.display.flip()
 		clock.tick(60)
 	pygame.quit()
