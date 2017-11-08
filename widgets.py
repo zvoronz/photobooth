@@ -101,7 +101,7 @@ class MyKeyboardRenderer(VKeyboardRenderer):
 			(position[0] + 25, position[1]) + (size[0] - 50, size[1]))
 
 MyKeyboardRenderer.DEFAULT = MyKeyboardRenderer(
-    pygame.font.Font('fonts\\DejaVuSans.ttf', 25),
+    pygame.font.Font('fonts/DejaVuSans.ttf', 25),
     (255, 255, 255),
     ((255, 255, 255), (0, 0, 0)),
     ((0, 0, 0), (255, 255, 255)),
