@@ -21,6 +21,7 @@ import datetime
 import camera
 import subprocess
 from pygame_vkeyboard import *
+from shutil import copy
 
 WIN32 = (os.name != 'posix')
 TMP_FOLDER = 'tmp'
@@ -301,6 +302,13 @@ def main():
 					else:
 ##						set_current_screen('OptionsScreen')
 						passKeyb.enable()
+						
+				if event.name == 'btnSaveClick':
+					path = os.path.join(TMP_FOLDER,'results')
+					files = os.listdir(path)
+					dest = '/media/pi/6063-0565/'
+					for f in files:
+						copy(f, dest)
 					
 		screens[current_screen].render(window)
 		for textedit in \
