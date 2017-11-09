@@ -308,7 +308,7 @@ def main():
 					files = os.listdir(path)
 					dest = '/media/pi/6063-0565/'
 					for f in files:
-						copy(f, dest)
+						copy(os.path.join(path, f), dest)
 					
 		screens[current_screen].render(window)
 		for textedit in \
