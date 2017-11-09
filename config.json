@@ -2,35 +2,55 @@
 	"name":"OptionsScreen",
 	"labels": [{
 		"hvaligment": [true, false],
-		"font_size": 50,
+		"font_size": 40,
 		"color": [0, 0, 0],
-		"text": "Options",
-		"position": [0, 100],
+		"text": "Settings",
+		"position": [0, 30],
 		"font": "fonts/arial.ttf"
 	}, {
-		"hvaligment": [true, false],
-		"font_size": 50,
+		"hvaligment": [false, false],
+		"font_size": 20,
 		"color": [0, 0, 0],
-		"text": "",
-		"position": [0, 250],
-		"font": "fonts/arial.ttf"
+		"text": "Number of prints",
+		"position": [271, 125],
+		"font": "fonts/arial.ttf",
+		"zindex": 99
 	}],
 	"buttons":[{
-		"image":"img/options_btn.png",
-		"position":[700, 380],
+		"image":"img/back_btn.png",
+		"position":[30, 380],
 		"event":"btnOptionsClick"
+	}, {
+		"image":"img/print_all_btn.png",
+		"position":[120, 365],
+		"event":"btnPrintAllClick"
+	}, {
+		"image":"img/save_btn.png",
+		"position":[300, 365],
+		"event":"btnSaveClick"
+	}, {
+		"image":"img/up_arrow.png",
+		"position":[430, 105],
+		"event":"btnSaveClick"
+	}, {
+		"image":"img/down_arrow.png",
+		"position":[430, 145],
+		"event":"btnSaveClick"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
 		"position":[0, 0]
+	}, {
+		"file":"img/spiner_bg.png",
+		"position":[269, 100]
 	}],
 	"textedits":[{
 		"position":[100, 200],
 		"size":[600, 30],
-		"hvaligment": [true, false],
+		"hvaligment": [true, true],
 		"font_size": 20,
 		"color": [0, 0, 0],
-		"text": "",
+		"text": "Max & Jema Wedding!",
 		"font": "fonts/arial.ttf"
 	}],
 	"background": [139, 174, 233]

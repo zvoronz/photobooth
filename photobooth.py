@@ -20,6 +20,7 @@ import threading, thread
 import datetime
 import camera
 import subprocess
+from pygame_vkeyboard import *
 
 WIN32 = (os.name != 'posix')
 TMP_FOLDER = 'tmp'
@@ -139,6 +140,13 @@ def capture_photo(number):
 	if not WIN32:
 		camera.trigger_capture()
 
+def checkPassword(password):
+	global passKeyb
+	if password.find('1532') > -1:
+		passKeyb.disable()
+		passKeyb.buffer = ''
+		set_current_screen('OptionsScreen')
+				
 def main():
 	global WIN32, TMP_FOLDER, SETTINGS, SCENES, PHOTO_FORMAT, screens,\
 		current_screen, result_file_name, TAKE_PHOTO, photo_count,\
@@ -178,11 +186,22 @@ def main():
 	window = pygame.display.set_mode((800, 480), window_prop, 32)
 	clock = pygame.time.Clock()
 	
+	global passKeyb
+	passKeyb = VKeyboard(window, checkPassword,
+						VKeyboardLayout(VKeyboardLayout.NUMBER),
+						renderer=widgets.MyKeyboardRenderer.DEFAULT)
+	
 	delayScreen = SETTINGS['delay_screens']
 	set_current_screen('MainScreen')
 	while done == False:
 		for event in pygame.event.get():
-			screens[current_screen].onevent(event)
+			if passKeyb.state == 0:
+				screens[current_screen].onevent(event)
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if event.pos[1] < 240:
+					passKeyb.disable()
+				continue;
+				 
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_ESCAPE:
 					done = True
@@ -280,7 +299,8 @@ def main():
 					if current_screen_is('OptionsScreen'):
 						set_current_screen('MainScreen')
 					else:
-						set_current_screen('OptionsScreen')
+##						set_current_screen('OptionsScreen')
+						passKeyb.enable()
 					
 		screens[current_screen].render(window)
 		for textedit in \
@@ -288,6 +308,10 @@ def main():
 			if textedit.keyboard.state > 0:
 				textedit.keyboard.invalidate()
 				textedit.keyboard.on_event(event)
+		if passKeyb.state > 0:
+			passKeyb.invalidate()
+			passKeyb.on_event(event)
+			
 		pygame.display.flip()
 		clock.tick(60)
 	pygame.quit()

@@ -29,8 +29,11 @@ class Screen:
 			if label.has_key('hvaligment'):
 				h = label['hvaligment'][0]
 				v = label['hvaligment'][1]
-			self.controls.append(Label(font.render(label['text'], True,
-						tuple(label['color'])), tuple(label['position']), h, v))
+			cntLabel = Label(font.render(label['text'], True,
+						tuple(label['color'])), tuple(label['position']), h, v)
+			if label.has_key('zindex'):
+				cntLabel.zindex = label['zindex']
+			self.controls.append(cntLabel)
 		
 		for picture in (config['pictures'] if config.has_key('pictures') else []):
 			image = None
@@ -42,20 +45,40 @@ class Screen:
 				size = picture['size']
 			if picture.has_key('name'):
 				name = picture['name']
-			self.controls.append(Picture(image, picture['position'], size, name))
+			cntPiture = Picture(image, picture['position'], size, name)
+			if picture.has_key('zindex'):
+				cntPiture.zindex = picture['zindex']
+			self.controls.append(cntPiture)
 			
 		for button in (config['buttons'] if config.has_key('buttons') else []):
 			image = self.imageCache.getImage(button['image'])
-			self.controls.append(Button(image, button['position'], button['event']))
+			cntButton = Button(image, button['position'], button['event'])
+			if button.has_key('zindex'):
+				cntButton.zindex = button['zindex']
+			self.controls.append(cntButton)
 			
 		for textedit in (config['textedits'] if config.has_key('textedits') else []):
-			self.controls = [TextEdit(textedit['position'], textedit['size'], self.fontCache)] \
-							+ self.controls
+			h, v = False, False
+			if textedit.has_key('hvaligment'):
+				h, v = textedit['hvaligment'][0], textedit['hvaligment'][1]
+			textEdit = TextEdit(textedit['position'], textedit['size'],
+							 self.fontCache, textedit['font'],
+							 textedit['font_size'], tuple(textedit['color']),
+							 h, v)
+		 	textEdit.setText(textedit['text'])
+		 	if textedit.has_key('zindex'):
+				textEdit.zindex = textedit['zindex']
+			self.controls.insert(0, textEdit)
 
+		self.controls = sorted(self.controls, key=lambda k: k.zindex)
+		
 	def render(self, screen):
 		screen.fill(self.background)
 		for control in self.controls:
-		    control.render(screen)
+			try:
+				control.render(screen)
+  			except AttributeError as ex:
+  				print 'Control do not have \'render\' method'
 	
 	def onevent(self, event):
 		for control in self.controls:
@@ -81,17 +104,27 @@ class Screen:
 		return controls
 
 class Label:
-	def __init__(self, text, position, hcenter = False, vcenter = False):
+	def __init__(self, text, position, hcenter = False, vcenter = False,
+ 				size = None):
 		self.text = text
 		self.position = position
 		self.hcenter = hcenter
 		self.vcenter = vcenter
+		self.size = size
+		self.zindex = 0
 
 	def render(self, screen):
-		position = (screen.get_width() / 2 - self.text.get_width() / 2 if
-											 self.hcenter else self.position[0],
+		x, y = self.position
+		if self.size:
+			position = (x + self.size[0] / 2 - self.text.get_width() / 2 if
+											 self.hcenter else x,
+					y + self.size[1] / 2 - self.text.get_height() / 2 if
+											self.vcenter else y)
+		else:
+			position = (screen.get_width() / 2 - self.text.get_width() / 2 if
+											 self.hcenter else x,
 					screen.get_height() / 2 - self.text.get_height() / 2 if
-											self.vcenter else self.position[1])
+											self.vcenter else y)
 		screen.blit(self.text, position)
 
 class MyKeyboardRenderer(VKeyboardRenderer):
@@ -125,8 +158,10 @@ class TextEdit:
 		self.color = color
 		self.font_size = font_size
 		self.fontCache = fontCache
+		self.text = ''
+		self.zindex = 0
 		
-	def textConsumer(self, text):
+	def setText(self, text):
 		print text
 		font = self.fontCache.getFont(self.font, self.font_size)
 		if font == None:
@@ -135,18 +170,20 @@ class TextEdit:
 			
 		self.label = Label(font.render(text, True, tuple(self.color)),
 							(self.position[0] + 2, self.position[1] + 2),
-							self.hcenter, self.vcenter)
+							self.hcenter, self.vcenter, self.size)
+		self.text = text
 
 	def render(self, screen):
 		screen.fill((255, 255, 255), self.rect)
 		pygame.draw.rect(screen, (0, 0, 0), self.rect, 1)
 		if self.keyboard == None:
-			self.keyboard = VKeyboard(screen, self.textConsumer,
+			self.keyboard = VKeyboard(screen, self.setText,
 									VKeyboardLayout(VKeyboardLayout.AZERTY),
 									renderer=MyKeyboardRenderer.DEFAULT)
 			new_size = (800, 455)
 			self.keyboard.original_layout.configure_bound(new_size)
 			self.keyboard.special_char_layout.configure_bound(new_size)
+			self.keyboard.buffer = self.text
 			self.keyboardRect = pygame.Rect(self.keyboard.layout.position,
 								self.keyboard.layout.size)
 		if self.label:
@@ -180,6 +217,7 @@ class Button:
 		self.center = (position[0] + size[0] / 2, position[1] + size[1] / 2)
 		new_size = tuple(map(lambda(x):int(x * 0.9), size))
 		self.image_pushed = pygame.transform.scale(self.image, new_size)
+		self.zindex = 0
 		
 	def render(self, screen):
 		if self.state == Button.BTN_STATE_NORM:
@@ -214,6 +252,8 @@ class Picture:
 		self.position = position
 		self.size = size
 		self.name = name
+		self.zindex = 0
+		
 	def render(self, screen):
 		if self.image != None:
 			screen.blit(self.image, self.position)
