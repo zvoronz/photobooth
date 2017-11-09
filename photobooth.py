@@ -22,6 +22,7 @@ import camera
 import subprocess
 from pygame_vkeyboard import *
 from shutil import copy
+import re
 
 WIN32 = (os.name != 'posix')
 TMP_FOLDER = 'tmp'
@@ -302,13 +303,32 @@ def main():
 					else:
 ##						set_current_screen('OptionsScreen')
 						passKeyb.enable()
-						
+				
 				if event.name == 'btnSaveClick':
-					path = os.path.join(TMP_FOLDER,'results')
-					files = os.listdir(path)
-					dest = '/media/pi/6063-0565/'
-					for f in files:
-						copy(os.path.join(path, f), dest)
+					reg = re.compile('sda\d')
+					dev = ''
+					with open('/proc/partitions') as f:
+						parts = f.readlines()
+						parts = parts[2:]
+						for part in parts:
+							rows = part.split()
+							if reg.search(rows[3]):
+								dev = rows[3]
+								break
+					dest = ''
+					regmt = re.compile(dev)
+					mount = subprocess.Popen(['mount'], stdout=subprocess.PIPE,
+									shell=False)
+					mounts = mount.stdout.readlines()
+					for mpoint in mounts:
+						points = mpoint.split()
+						if regmt.search(points[0]):
+							dest = points[2]
+					if dest != '':					
+						path = os.path.join(TMP_FOLDER,'results')
+						files = os.listdir(path)
+						for f in files:
+							copy(os.path.join(path, f), dest)
 					
 		screens[current_screen].render(window)
 		for textedit in \
