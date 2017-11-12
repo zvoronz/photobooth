@@ -13,21 +13,21 @@
                 "size": [552, 368]
             }, 
             {
-                "position": [24, 468], 
+                "position": [24, 428], 
                 "angle": 0, 
                 "type": "image", 
                 "file": "capt0002.jpg", 
                 "size": [552, 368]
             }, 
             {
-                "position": [24, 886], 
+                "position": [24, 806], 
                 "angle": 0, 
                 "type": "image", 
                 "file": "capt0003.jpg", 
                 "size": [552, 368]
             }, 
             {
-                "position": [24, 1304], 
+                "position": [24, 1184], 
                 "angle": 0, 
                 "type": "image", 
                 "file": "capt0004.jpg", 
@@ -37,10 +37,23 @@
                 "font_size": 45, 
                 "angle": 0, 
                 "text": "www.snappycampers.co.uk", 
-                "text_color": [255, 0, 255], 
-                "position": [25, 1700], 
+                "text_color": [0, 0, 0], 
+                "position": [25, 1730], 
                 "font": "fonts/arial.ttf", 
-                "type": "label"
+                "type": "label",
+				"vertical_center" : false,
+				"horizontal_center" : true
+            },
+			{
+                "font_size": 70, 
+                "angle": 0,
+                "text": "custom text", 
+                "text_color": [0, 0, 0], 
+                "position": [24, 1562],
+                "font": "fonts/ANTQUAB.TTF", 
+                "type": "label",
+				"vertical_center" : false,
+				"horizontal_center" : true
             }
         ]
     }

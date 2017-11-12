@@ -6,28 +6,28 @@
         "background_color": [255, 255, 255],
         "components": [
             {
-                "position": [100, 120], 
+                "position": [170, 145], 
                 "angle": 270, 
                 "type": "image", 
                 "file": "capt0001.jpg", 
                 "size": [750, 500]
             }, 
             {
-                "position": [100, 930], 
+                "position": [170, 905], 
                 "angle": 270, 
                 "type": "image", 
                 "file": "capt0002.jpg", 
                 "size": [750, 500]
             }, 
             {
-                "position": [660, 120], 
+                "position": [680, 145], 
                 "angle": 270, 
                 "type": "image", 
                 "file": "capt0003.jpg", 
                 "size": [750, 500]
             }, 
             {
-                "position": [660, 930], 
+                "position": [680, 905], 
                 "angle": 270, 
                 "type": "image", 
                 "file": "capt0004.jpg", 
@@ -40,7 +40,20 @@
                 "text_color": [0, 0, 0], 
                 "position": [25, 580],
                 "font": "fonts/arial.ttf", 
-                "type": "label"
+                "type": "label",
+				"vertical_center" : true,
+				"horizontal_center" : false
+            }, 
+            {
+                "font_size": 70, 
+                "angle": 270, 
+                "text": "custom text", 
+                "text_color": [0, 0, 0], 
+                "position": [95, 580],
+                "font": "fonts/ANTQUAB.TTF", 
+                "type": "label",
+				"vertical_center" : true,
+				"horizontal_center" : false
             }
         ]
     }

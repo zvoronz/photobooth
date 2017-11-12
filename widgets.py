@@ -59,12 +59,15 @@ class Screen:
 			
 		for textedit in (config['textedits'] if config.has_key('textedits') else []):
 			h, v = False, False
+			name = ''
 			if textedit.has_key('hvaligment'):
 				h, v = textedit['hvaligment'][0], textedit['hvaligment'][1]
+			if textedit.has_key('name'):
+				name = textedit['name']
 			textEdit = TextEdit(textedit['position'], textedit['size'],
 							 self.fontCache, textedit['font'],
 							 textedit['font_size'], tuple(textedit['color']),
-							 h, v)
+							 h, v, name)
 		 	textEdit.setText(textedit['text'])
 		 	if textedit.has_key('zindex'):
 				textEdit.zindex = textedit['zindex']
@@ -144,7 +147,7 @@ MyKeyboardRenderer.DEFAULT = MyKeyboardRenderer(
 class TextEdit:
 	def __init__(self, position, size, fontCache, font = "fonts/arial.ttf",
 							font_size = 20, color = (0, 0, 0),
-							hcenter = False, vcenter = False):
+							hcenter = False, vcenter = False, name = ""):
 		self.position = position
 		self.size = size
 		self.rect = pygame.Rect(self.position[0], self.position[1], self.size[0],
@@ -160,6 +163,7 @@ class TextEdit:
 		self.fontCache = fontCache
 		self.text = ''
 		self.zindex = 0
+		self.name = name
 		
 	def setText(self, text):
 		print text
@@ -172,6 +176,9 @@ class TextEdit:
 							(self.position[0] + 2, self.position[1] + 2),
 							self.hcenter, self.vcenter, self.size)
 		self.text = text
+		
+	def getText(self):
+		return self.text
 
 	def render(self, screen):
 		screen.fill((255, 255, 255), self.rect)

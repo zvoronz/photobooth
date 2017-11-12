@@ -31,11 +31,11 @@
 	}, {
 		"image":"img/up_arrow.png",
 		"position":[430, 105],
-		"event":"btnSaveClick"
+		"event":"btnUpClick"
 	}, {
 		"image":"img/down_arrow.png",
 		"position":[430, 145],
-		"event":"btnSaveClick"
+		"event":"btnDownClick"
 	}],
 	"pictures":[{
 		"file":"img/frame.png",
@@ -51,7 +51,18 @@
 		"font_size": 20,
 		"color": [0, 0, 0],
 		"text": "Max & Jema Wedding!",
-		"font": "fonts/arial.ttf"
+		"font": "fonts/arial.ttf",
+		"name": "txtCaption"
+	}, {
+		"position":[485, 112],
+		"size":[40, 50],
+		"hvaligment": [true, true],
+		"font_size": 20,
+		"color": [0, 0, 0],
+		"text": "1",
+		"font": "fonts/arial.ttf",
+		"zindex" : 98,
+		"name" : "txtUpDown"
 	}],
 	"background": [139, 174, 233]
 }, {

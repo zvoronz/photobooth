@@ -47,7 +47,9 @@
                 "text_color": [255, 0, 255], 
                 "position": [25, 1600], 
                 "font": "fonts/arial.ttf", 
-                "type": "label"
+                "type": "label",
+				"vertical_center" : true,
+				"horizontal_center" : false
             }
         ]
     }

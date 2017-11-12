@@ -116,7 +116,16 @@ def create_photo(photo_config):
 			dt.text((0, 0), text_line, tuple(item['text_color']), font)
 			text = text.rotate(item['angle'], expand=True)
 			
-			image.paste(text, tuple(item['position']), text)
+			x, y = item['position']
+			width, height = photo_format
+			textWidth, textHeight = text.size
+			
+			if item['vertical_center']:
+				y = height / 2 - textHeight / 2
+			if item['horizontal_center']:
+				x = width / 2 - textWidth / 2
+			
+			image.paste(text, (x, y), text)
 			
 			del d
 			del dt
@@ -148,6 +157,10 @@ def checkPassword(password):
 		passKeyb.disable()
 		passKeyb.buffer = ''
 		set_current_screen('OptionsScreen')
+		updown = screens[current_screen].getControlByName("txtUpDown")
+		updown.setText(str(SETTINGS['print_copies']))
+		caption = screens[current_screen].getControlByName("txtCaption")
+		caption.setText(SETTINGS['custom_text'])
 				
 def main():
 	global WIN32, TMP_FOLDER, SETTINGS, SCENES, PHOTO_FORMAT, screens,\
@@ -175,6 +188,7 @@ def main():
 	for frmt in PHOTO_FORMAT:
 		if frmt['name'] == SETTINGS['print_format']:
 			selected_format = frmt
+	selected_format['components'][-1]['text'] = SETTINGS['custom_text']
 	
 	font_cache = widgets.FontCache()
 	image_cache = widgets.ImageCache()
@@ -290,19 +304,39 @@ def main():
 					
 				if event.name == 'btnPrintClick':
 					print 'Print photo'
-					sub = subprocess.Popen(['lp','-d','MITSUBISHI_CPD80D',
-								result_file_name],
+					sub = subprocess.Popen(['lp', '-n', SETTINGS['print_copies'],
+								'-d', 'MITSUBISHI_CPD80D', result_file_name],
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 					err = sub.stderr.read()
 					print err
+					
+				if event.name == 'btnPrintAllClick':
+					pass
 				
 				if event.name == 'btnOptionsClick':
 					if current_screen_is('OptionsScreen'):
+						updown = screens[current_screen].getControlByName("txtUpDown")
+						SETTINGS['print_copies'] = int(updown.getText())
+						caption = screens[current_screen].getControlByName("txtCaption")
+						SETTINGS['custom_text'] = caption.getText()
+						selected_format['components'][-1]['text'] = SETTINGS['custom_text']
+						with open('settings.json', 'w') as f:
+							f.write(json.dumps(SETTINGS, indent=4))
 						set_current_screen('MainScreen')
 					else:
-##						set_current_screen('OptionsScreen')
 						passKeyb.enable()
+				
+				if event.name == 'btnUpClick':
+					ctrl = screens[current_screen].getControlByName("txtUpDown")
+					value = int(ctrl.getText())
+					ctrl.setText(str(value + 1))
+					
+				if event.name == 'btnDownClick':
+					ctrl = screens[current_screen].getControlByName("txtUpDown")
+					value = int(ctrl.getText())
+					if value > 1:
+						ctrl.setText(str(value - 1))
 				
 				if event.name == 'btnSaveClick':
 					reg = re.compile('sda\d')
