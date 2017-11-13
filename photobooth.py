@@ -323,7 +323,7 @@ def main():
 					path = 'results'
 					files = glob.glob(path + '/*.jpg')
 					for f in files:
-						sub = subprocess.Popen(['lp', '-n', 1,
+						sub = subprocess.Popen(['lp', '-n', str(1),
 								'-d', 'MITSUBISHI_CPD80D', f],
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
