@@ -15,6 +15,22 @@
 		"position": [271, 125],
 		"font": "fonts/arial.ttf",
 		"zindex": 99
+	}, {
+		"hvaligment": [false, false],
+		"font_size": 20,
+		"color": [0, 0, 0],
+		"text": "Collages created: 0",
+		"position": [310, 320],
+		"font": "fonts/arial.ttf",
+		"name": "lblCollages"
+	}, {
+		"hvaligment": [false, false],
+		"font_size": 20,
+		"color": [0, 0, 0],
+		"text": "Saved: 0\\10",
+		"position": [500, 390],
+		"font": "fonts/arial.ttf",
+		"name": "lblSaved"
 	}],
 	"buttons":[{
 		"image":"img/back_btn.png",

@@ -15,24 +15,22 @@ from os.path import join, dirname
 class Screen:
 	def __init__(self, config, font_cache, image_cache):
 		self.name = config['name']
-		self.fontCache = font_cache
+		self.fontCache = FontCache()
 		self.imageCache = image_cache
 		self.background = tuple(config['background'])
 		self.controls = []
 		for label in (config['labels'] if config.has_key('labels') else []):
-			font = self.fontCache.getFont(label['font'], label['font_size'])
-			if font == None:
-				font = pygame.font.Font(label['font'], label['font_size'])
-				self.fontCache.addFont(label['font'], label['font_size'], font)
 			h = False
 			v = False
 			if label.has_key('hvaligment'):
 				h = label['hvaligment'][0]
 				v = label['hvaligment'][1]
-			cntLabel = Label(font.render(label['text'], True,
-						tuple(label['color'])), tuple(label['position']), h, v)
+			cntLabel = Label(label['text'], label['color'], label['font'],
+							label['font_size'], tuple(label['position']), h, v)
 			if label.has_key('zindex'):
 				cntLabel.zindex = label['zindex']
+			if label.has_key('name'):
+				cntLabel.name = label['name']
 			self.controls.append(cntLabel)
 		
 		for picture in (config['pictures'] if config.has_key('pictures') else []):
@@ -65,11 +63,10 @@ class Screen:
 			if textedit.has_key('name'):
 				name = textedit['name']
 			textEdit = TextEdit(textedit['position'], textedit['size'],
-							 self.fontCache, textedit['font'],
-							 textedit['font_size'], tuple(textedit['color']),
-							 h, v, name)
-		 	textEdit.setText(textedit['text'])
-		 	if textedit.has_key('zindex'):
+							 textedit['font'], textedit['font_size'],
+							 tuple(textedit['color']), h, v, name)
+			textEdit.setText(textedit['text'])
+			if textedit.has_key('zindex'):
 				textEdit.zindex = textedit['zindex']
 			self.controls.insert(0, textEdit)
 
@@ -80,8 +77,8 @@ class Screen:
 		for control in self.controls:
 			try:
 				control.render(screen)
-  			except AttributeError as ex:
-  				print 'Control do not have \'render\' method'
+			except AttributeError as ex:
+				print 'Control do not have \'render\' method'
 	
 	def onevent(self, event):
 		for control in self.controls:
@@ -107,45 +104,60 @@ class Screen:
 		return controls
 
 class Label:
-	def __init__(self, text, position, hcenter = False, vcenter = False,
- 				size = None):
+	def __init__(self, text, color, font, font_size, position, hcenter = False,
+					vcenter = False, size = None):
 		self.text = text
 		self.position = position
 		self.hcenter = hcenter
 		self.vcenter = vcenter
 		self.size = size
 		self.zindex = 0
+		self.font = font
+		self.font_size = font_size
+		self.fontCache = FontCache()
+		self.color = color
+		self.fontImg = None
+		self.setText(self.text)
+		self.name = ''
 
 	def render(self, screen):
 		x, y = self.position
 		if self.size:
-			position = (x + self.size[0] / 2 - self.text.get_width() / 2 if
-											 self.hcenter else x,
-					y + self.size[1] / 2 - self.text.get_height() / 2 if
+			position = (x + self.size[0] / 2 - self.fontImg.get_width() / 2 if
+											self.hcenter else x,
+					y + self.size[1] / 2 - self.fontImg.get_height() / 2 if
 											self.vcenter else y)
 		else:
-			position = (screen.get_width() / 2 - self.text.get_width() / 2 if
-											 self.hcenter else x,
-					screen.get_height() / 2 - self.text.get_height() / 2 if
+			position = (screen.get_width() / 2 - self.fontImg.get_width() / 2 if
+											self.hcenter else x,
+					screen.get_height() / 2 - self.fontImg.get_height() / 2 if
 											self.vcenter else y)
-		screen.blit(self.text, position)
+		screen.blit(self.fontImg, position)
+		
+	def setText(self, text):
+		self.text = text
+		font = self.fontCache.getFont(self.font, self.font_size)
+		if font == None:
+			font = pygame.font.Font(self.font, self.font_size)
+			self.fontCache.addFont(self.font, self.font_size, font)
+		self.fontImg = font.render(self.text, True, tuple(self.color))
 
 class MyKeyboardRenderer(VKeyboardRenderer):
 	
-    def draw_background(self, surface, position, size):
-        pygame.draw.rect(surface, (255, 255, 255, 255),
+	def draw_background(self, surface, position, size):
+		pygame.draw.rect(surface, (255, 255, 255, 255),
 			(position[0] + 25, position[1]) + (size[0] - 50, size[1]))
 
 MyKeyboardRenderer.DEFAULT = MyKeyboardRenderer(
-    pygame.font.Font('fonts/DejaVuSans.ttf', 25),
-    (255, 255, 255),
-    ((255, 255, 255), (0, 0, 0)),
-    ((0, 0, 0), (255, 255, 255)),
-    ((180, 180, 180), (0, 0, 0)),
+	pygame.font.Font('fonts/DejaVuSans.ttf', 25),
+	(255, 255, 255),
+	((255, 255, 255), (0, 0, 0)),
+	((0, 0, 0), (255, 255, 255)),
+	((180, 180, 180), (0, 0, 0)),
 )
 
 class TextEdit:
-	def __init__(self, position, size, fontCache, font = "fonts/arial.ttf",
+	def __init__(self, position, size, font = "fonts/arial.ttf",
 							font_size = 20, color = (0, 0, 0),
 							hcenter = False, vcenter = False, name = ""):
 		self.position = position
@@ -160,21 +172,15 @@ class TextEdit:
 		self.font = font
 		self.color = color
 		self.font_size = font_size
-		self.fontCache = fontCache
 		self.text = ''
 		self.zindex = 0
 		self.name = name
+		self.label = Label(self.text, color, font, font_size, (position[0] + 2,
+							position[1] + 2), hcenter, vcenter, size)
 		
 	def setText(self, text):
 		print text
-		font = self.fontCache.getFont(self.font, self.font_size)
-		if font == None:
-			font = pygame.font.Font(self.font, self.font_size)
-			self.fontCache.addFont(self.font, self.font_size, font)
-			
-		self.label = Label(font.render(text, True, tuple(self.color)),
-							(self.position[0] + 2, self.position[1] + 2),
-							self.hcenter, self.vcenter, self.size)
+		self.label.setText(text)
 		self.text = text
 		
 	def getText(self):
@@ -265,6 +271,15 @@ class Picture:
 		if self.image != None:
 			screen.blit(self.image, self.position)
 
+def singleton(cls):
+	instances = {}
+	def getinstance():
+		if cls not in instances:
+			instances[cls] = cls()
+		return instances[cls]
+	return getinstance
+
+@singleton
 class ImageCache:
 	def __init__(self):
 		self.images = []
@@ -277,6 +292,7 @@ class ImageCache:
 		self.images.append({'path':image_path, 'image':image})
 		return image
 
+@singleton
 class FontCache:
 	def __init__(self):
 		self.fonts = []

@@ -10,7 +10,7 @@
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 
-import os
+import os, glob
 os.environ['PYGAME_FREETYPE'] = ''
 import pygame
 import widgets
@@ -131,7 +131,7 @@ def create_photo(photo_config):
 			del dt
 	
 	today = datetime.datetime.today()
-	path = os.path.join(TMP_FOLDER,'results')
+	path = 'results'
 	if not os.path.exists(path):
 		os.mkdir(path)
 	filename = os.path.join(path, 'result_%s_%s.jpg' %
@@ -161,6 +161,13 @@ def checkPassword(password):
 		updown.setText(str(SETTINGS['print_copies']))
 		caption = screens[current_screen].getControlByName("txtCaption")
 		caption.setText(SETTINGS['custom_text'])
+		lblCollages = screens[current_screen].getControlByName("lblCollages")
+		lblSaved = screens[current_screen].getControlByName("lblSaved")
+		path = 'results'
+		numfiles = len(glob.glob(path + '/*.jpg'))
+		lblCollages.setText('Collages created: %d' % numfiles)
+		lblSaved.setText('Saved: 0\\%d' % numfiles)
+		
 				
 def main():
 	global WIN32, TMP_FOLDER, SETTINGS, SCENES, PHOTO_FORMAT, screens,\
@@ -312,7 +319,14 @@ def main():
 					print err
 					
 				if event.name == 'btnPrintAllClick':
-					pass
+					files = glob.glob(path + '/*.jpg')
+					for f in files:
+						sub = subprocess.Popen(['lp', '-n', 1,
+								'-d', 'MITSUBISHI_CPD80D', f],
+								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+								shell=False)
+						err = sub.stderr.read()
+						print err
 				
 				if event.name == 'btnOptionsClick':
 					if current_screen_is('OptionsScreen'):
@@ -358,11 +372,20 @@ def main():
 						points = mpoint.split()
 						if regmt.search(points[0]):
 							dest = points[2]
-					if dest != '':					
-						path = os.path.join(TMP_FOLDER,'results')
-						files = os.listdir(path)
+
+					if dest != '':
+						path = 'results'
+						lblSaved = screens[current_screen].getControlByName("lblSaved")
+						files = glob.glob(path + '/*.jpg')
+						numfiles = len(files)
+						saved = 0
 						for f in files:
-							copy(os.path.join(path, f), dest)
+							copy(f, dest)
+							saved += 1
+							lblSaved.setText('Saved: %d\\%d' % (saved, numfiles))
+							## hack, update screen
+							screens[current_screen].render(window)
+							pygame.display.flip()
 					
 		screens[current_screen].render(window)
 		for textedit in \
