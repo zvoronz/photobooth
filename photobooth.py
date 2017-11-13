@@ -320,6 +320,7 @@ def main():
 					print err
 					
 				if event.name == 'btnPrintAllClick':
+					path = 'results'
 					files = glob.glob(path + '/*.jpg')
 					for f in files:
 						sub = subprocess.Popen(['lp', '-n', 1,
