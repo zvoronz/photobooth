@@ -11,6 +11,7 @@
 #-------------------------------------------------------------------------------
 
 import os, glob
+os.chdir(os.path.dirname(sys.argv[0]))
 os.environ['PYGAME_FREETYPE'] = ''
 import pygame
 import widgets
