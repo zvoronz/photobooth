@@ -10,7 +10,7 @@
 # Licence:     MIT
 #-------------------------------------------------------------------------------
 
-import os, glob
+import os, glob, sys
 os.chdir(os.path.dirname(sys.argv[0]))
 os.environ['PYGAME_FREETYPE'] = ''
 import pygame
