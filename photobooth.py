@@ -89,9 +89,13 @@ def create_photo(photo_config):
 		filepattern = os.path.join(TMP_FOLDER, 'capt%04n.jpg')
 		camera.get_all_files(filepattern)
 		thread.start_new_thread(camera.delete_all_files, ())
-	photo_format = tuple(map(lambda x: photo_config['dpi'] * x, photo_config['format']))
+		
+	scale = 2
+	photo_format = tuple(map(lambda x: photo_config['dpi'] * x * scale,
+													photo_config['format']))
 	
-	image = Image.new('RGB', photo_format, tuple(photo_config['background_color']))
+	image = Image.new('RGB', photo_format,
+									tuple(photo_config['background_color']))
 	
 	for item in photo_config['components']:
 		item_type = item['type']
@@ -100,15 +104,17 @@ def create_photo(photo_config):
 			picture = item
 			photo_name = getFilePath(picture['file'])
 			photo = Image.open(photo_name)
-			photo = photo.resize(tuple(picture['size']))
+			photo = photo.resize((picture['size'][0] * scale,
+								  picture['size'][1] * scale))
 			photo = photo.convert('RGBA')
 			photo = photo.rotate(picture['angle'], expand=True)
-			image.paste(photo, tuple(picture['position']), photo)
+			image.paste(photo, (picture['position'][0] * scale,
+								picture['position'][1] * scale), photo)
 			del photo
 			
 		if item_type == 'label':
 			text_line = item['text']
-			font = ImageFont.truetype(item['font'], item['font_size'])
+			font = ImageFont.truetype(item['font'], item['font_size'] * scale)
 			d = ImageDraw.Draw(image)
 			size = d.textsize(text_line, font)
 			
@@ -117,7 +123,7 @@ def create_photo(photo_config):
 			dt.text((0, 0), text_line, tuple(item['text_color']), font)
 			text = text.rotate(item['angle'], expand=True)
 			
-			x, y = item['position']
+			x, y = item['position'][0] * scale, item['position'][1] * scale
 			width, height = photo_format
 			textWidth, textHeight = text.size
 			
@@ -312,8 +318,9 @@ def main():
 					
 				if event.name == 'btnPrintClick':
 					print 'Print photo'
-					sub = subprocess.Popen(['lp', '-n', SETTINGS['print_copies'],
-								'-d', 'MITSUBISHI_CPD80D', result_file_name],
+					sub = subprocess.Popen(['lp', '-n',
+								str(SETTINGS['print_copies']), '-d',
+								'MITSUBISHI_CPD80D', result_file_name],
 								stdout=subprocess.PIPE, stderr=subprocess.PIPE,
 								shell=False)
 					err = sub.stderr.read()
