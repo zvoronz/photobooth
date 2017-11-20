@@ -2,10 +2,10 @@
     "end_screen_delay": 5000, 
     "strike_a_pose_delay": 2000, 
     "preview_screen": true, 
-    "custom_text": "Georgiy & Karine wedding!", 
-    "print_format": "4x6 simple", 
+    "preview_screen_delay": 0, 
+    "custom_text": "Max & J|\\?$\u00a7!\u00e7$${]", 
     "show_mouse": true, 
     "delay_screens": "Screen5", 
     "print_copies": 1, 
-    "preview_screen_delay": 0
+    "print_format": "2x6 simple"
 }

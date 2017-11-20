@@ -47,7 +47,7 @@
             {
                 "font_size": 70, 
                 "angle": 270, 
-                "text": "custom text", 
+                "text": "custom text",
                 "text_color": [0, 0, 0], 
                 "position": [95, 580],
                 "font": "fonts/ANTQUAB.TTF", 

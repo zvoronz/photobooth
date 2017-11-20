@@ -2,7 +2,7 @@
     {
 		"name": "2x6 simple",
         "dpi": 300, 
-        "format": [2, 6],
+        "format": [4, 6],
         "background_color": [255, 255, 255],
         "components": [
             {
@@ -42,7 +42,8 @@
                 "font": "fonts/arial.ttf", 
                 "type": "label",
 				"vertical_center" : false,
-				"horizontal_center" : true
+				"horizontal_center" : true,
+				"size" : [552, 100]
             },
 			{
                 "font_size": 70, 
@@ -53,7 +54,60 @@
                 "font": "fonts/ANTQUAB.TTF", 
                 "type": "label",
 				"vertical_center" : false,
-				"horizontal_center" : true
+				"horizontal_center" : true,
+				"size" : [552, 100]
+            },
+			{
+                "position": [624, 50], 
+                "angle": 0, 
+                "type": "image", 
+                "file": "capt0001.jpg", 
+                "size": [552, 368]
+            }, 
+            {
+                "position": [624, 428], 
+                "angle": 0, 
+                "type": "image", 
+                "file": "capt0002.jpg", 
+                "size": [552, 368]
+            }, 
+            {
+                "position": [624, 806], 
+                "angle": 0, 
+                "type": "image", 
+                "file": "capt0003.jpg", 
+                "size": [552, 368]
+            }, 
+            {
+                "position": [624, 1184], 
+                "angle": 0, 
+                "type": "image", 
+                "file": "capt0004.jpg", 
+                "size": [552, 368]
+            }, 
+            {
+                "font_size": 45, 
+                "angle": 0, 
+                "text": "www.snappycampers.co.uk", 
+                "text_color": [0, 0, 0], 
+                "position": [624, 1730], 
+                "font": "fonts/arial.ttf", 
+                "type": "label",
+				"vertical_center" : false,
+				"horizontal_center" : true,
+				"size" : [552, 100]
+            },
+			{
+                "font_size": 70, 
+                "angle": 0,
+                "text": "custom text", 
+                "text_color": [0, 0, 0], 
+                "position": [624, 1562],
+                "font": "fonts/ANTQUAB.TTF", 
+                "type": "label",
+				"vertical_center" : false,
+				"horizontal_center" : true,
+				"size" : [552, 100]
             }
         ]
     }

@@ -11,7 +11,6 @@
 #-------------------------------------------------------------------------------
 
 import os, glob, sys
-os.chdir(os.path.dirname(sys.argv[0]))
 os.environ['PYGAME_FREETYPE'] = ''
 import pygame
 import widgets
@@ -29,6 +28,8 @@ WIN32 = (os.name != 'posix')
 TMP_FOLDER = 'tmp'
 if not WIN32:
 	TMP_FOLDER = '/tmp'
+	os.chdir(os.path.dirname(sys.argv[0]))
+	
 SETTINGS = {}
 SCENES = []
 PHOTO_FORMAT = []
@@ -128,9 +129,15 @@ def create_photo(photo_config):
 			textWidth, textHeight = text.size
 			
 			if item['vertical_center']:
-				y = height / 2 - textHeight / 2
+				if item.has_key('size'):
+					y = y + (item['size'][1] * 2 / 2 - textHeight / 2)
+				else:
+					y = height / 2 - textHeight / 2
 			if item['horizontal_center']:
-				x = width / 2 - textWidth / 2
+				if item.has_key('size'):
+					x = x + (item['size'][0] * 2 / 2 - textWidth / 2)
+				else:
+					x = width / 2 - textWidth / 2
 			
 			image.paste(text, (x, y), text)
 			
@@ -202,7 +209,11 @@ def main():
 	for frmt in PHOTO_FORMAT:
 		if frmt['name'] == SETTINGS['print_format']:
 			selected_format = frmt
-	selected_format['components'][-1]['text'] = SETTINGS['custom_text']
+			
+	for component in selected_format['components']:
+		if component.has_key('text') and\
+		   component['text'] == 'custom text':
+			component['text'] = SETTINGS['custom_text']
 	
 	font_cache = widgets.FontCache()
 	image_cache = widgets.ImageCache()
@@ -218,7 +229,7 @@ def main():
 	
 	global passKeyb
 	passKeyb = VKeyboard(window, checkPassword,
-						VKeyboardLayout(VKeyboardLayout.NUMBER),
+						VKeyboardLayout(VKeyboardLayout.AZERTY),
 						renderer=widgets.MyKeyboardRenderer.DEFAULT)
 	
 	delayScreen = SETTINGS['delay_screens']
@@ -343,7 +354,10 @@ def main():
 						SETTINGS['print_copies'] = int(updown.getText())
 						caption = screens[current_screen].getControlByName("txtCaption")
 						SETTINGS['custom_text'] = caption.getText()
-						selected_format['components'][-1]['text'] = SETTINGS['custom_text']
+						for component in selected_format['components']:
+							if component.has_key('text') and\
+							   component['text'] == 'custom text':
+								component['text'] = SETTINGS['custom_text']
 						with open('settings.json', 'w') as f:
 							f.write(json.dumps(SETTINGS, indent=4))
 						set_current_screen('MainScreen')
@@ -388,8 +402,18 @@ def main():
 						files = glob.glob(path + '/*.jpg')
 						numfiles = len(files)
 						saved = 0
-						for f in files:
-							copy(f, dest)
+						i = 0
+						while i != numfiles:
+							f = files[i]
+							try:
+								copy(f, dest)
+							except OSError as err:
+								mount = subprocess.Popen(['sudo', 'mount',
+									'/dev/sda1', '-o', 'remount,rw'],
+									stdout=subprocess.PIPE,
+									shell=False)
+								continue
+							i += 1
 							saved += 1
 							lblSaved.setText('Saved: %d\\%d' % (saved, numfiles))
 							## hack, update screen
